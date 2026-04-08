@@ -44,6 +44,7 @@ public class DepartmentActivity extends AppCompatActivity {
         initData();
         loadDepartments();
         initSearch();
+        setupToolbar();
     }
 
     private void initViews() {
@@ -111,6 +112,11 @@ public class DepartmentActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+    }
+    private void setupToolbar() {
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbarDepartment);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void filterDepartments(String keyword) {

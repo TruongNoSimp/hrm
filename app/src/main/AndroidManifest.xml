@@ -13,7 +13,7 @@
         android:theme="@style/Theme.HRM">
 
         <activity
-            android:name=".activities.DepartmentActivity"
+            android:name=".activities.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,8 +22,12 @@
         </activity>
 
         <activity
+            android:name=".activities.DepartmentActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".MainActivity"
-            android:exported="true" />
+            android:exported="false" />
     </application>
 
 </manifest>

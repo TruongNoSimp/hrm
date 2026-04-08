@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">HRM</string>
+    <string name="open_drawer">Mở menu</string>
+    <string name="close_drawer">Đóng menu</string>
 </resources>
