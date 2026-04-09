@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "hrm.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public static final String TABLE_PHONGBAN = "PhongBan";
     public static final String COL_ID_PHONG_BAN = "id_phong_ban";
@@ -39,6 +39,23 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO PhongBan (ma_pb, ten_phong, mo_ta) VALUES ('PB06', 'Hành chính', 'Quản lý văn thư và tài sản')");
         db.execSQL("INSERT INTO PhongBan (ma_pb, ten_phong, mo_ta) VALUES ('PB07', 'Chăm sóc khách hàng', 'Hỗ trợ và tiếp nhận phản hồi')");
         db.execSQL("INSERT INTO PhongBan (ma_pb, ten_phong, mo_ta) VALUES ('PB08', 'Kỹ thuật', 'Bảo trì và hỗ trợ kỹ thuật')");
+
+        String CREATE_TABLE_NHAN_VIEN = "CREATE TABLE NhanVien (" +
+                "id_nv INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "ma_nv TEXT UNIQUE, " +
+                "ho_ten TEXT NOT NULL, " +
+                "ngay_sinh TEXT, " +
+                "gioi_tinh TEXT, " +
+                "so_dt TEXT, " +
+                "email TEXT, " +
+                "id_phong_ban INTEGER, " +
+                "chuc_vu TEXT, " +
+                "ngay_vao_lam TEXT, " +
+                "he_so_luong REAL, " +
+                "trang_thai INTEGER, " +
+                "FOREIGN KEY(id_phong_ban) REFERENCES PhongBan(id_phong_ban)" +
+                ")";
+        db.execSQL(CREATE_TABLE_NHAN_VIEN);
     }
 
     @Override

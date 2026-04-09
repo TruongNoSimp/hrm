@@ -24,7 +24,9 @@
         <activity
             android:name=".activities.DepartmentActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".activities.EmployeeActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />

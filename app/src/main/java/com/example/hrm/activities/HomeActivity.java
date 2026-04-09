@@ -19,6 +19,8 @@ import com.example.hrm.R;
 import com.example.hrm.dao.DepartmentDAO;
 import com.google.android.material.navigation.NavigationView;
 
+import com.example.hrm.activities.EmployeeActivity;
+import com.example.hrm.dao.EmployeeDAO;
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
@@ -120,7 +122,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private void loadDashboardData() {
         int totalDepartments = getDepartmentCountFromDB();
-        int totalEmployees = 0;
+        int totalEmployees = getEmployeeCountFromDB();
         int presentToday = 0;
         int leaveToday = 0;
 
@@ -139,21 +141,33 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             return 0;
         }
     }
+    private int getEmployeeCountFromDB() {
+        try {
+            EmployeeDAO employeeDAO = new EmployeeDAO(this);
+            return employeeDAO.getEmployeeCountFromDB();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 
     private void setupClickEvents() {
         cardDepartments.setOnClickListener(v -> openDepartment());
-        cardEmployees.setOnClickListener(v -> showFeatureMessage("Quản lý nhân viên"));
+        cardEmployees.setOnClickListener(v -> openEmployee());
         cardPresent.setOnClickListener(v -> showFeatureMessage("Chấm công"));
         cardLeave.setOnClickListener(v -> showFeatureMessage("Nghỉ phép"));
 
         menuDepartment.setOnClickListener(v -> openDepartment());
-        menuEmployee.setOnClickListener(v -> showFeatureMessage("Quản lý nhân viên"));
+        menuEmployee.setOnClickListener(v -> openEmployee());
         menuAttendance.setOnClickListener(v -> showFeatureMessage("Chấm công"));
         menuLeave.setOnClickListener(v -> showFeatureMessage("Nghỉ phép"));
         menuReward.setOnClickListener(v -> showFeatureMessage("Khen thưởng"));
         menuDiscipline.setOnClickListener(v -> showFeatureMessage("Kỷ luật"));
     }
 
+    private void openEmployee() {
+        startActivity(new Intent(HomeActivity.this, EmployeeActivity.class));
+    }
     private void openDepartment() {
         startActivity(new Intent(HomeActivity.this, DepartmentActivity.class));
     }
@@ -173,7 +187,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             openDepartment();
 
         } else if (id == R.id.nav_employee) {
-            showFeatureMessage("Quản lý nhân viên");
+            openEmployee();
 
         } else if (id == R.id.nav_attendance) {
             showFeatureMessage("Chấm công");
