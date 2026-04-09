@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "hrm.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
 
     public static final String TABLE_PHONGBAN = "PhongBan";
     public static final String COL_ID_PHONG_BAN = "id_phong_ban";
@@ -53,6 +53,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "ngay_vao_lam TEXT, " +
                 "he_so_luong REAL, " +
                 "trang_thai INTEGER, " +
+                "avatar TEXT, " +
                 "FOREIGN KEY(id_phong_ban) REFERENCES PhongBan(id_phong_ban)" +
                 ")";
         db.execSQL(CREATE_TABLE_NHAN_VIEN);
@@ -60,6 +61,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS NhanVien");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PHONGBAN);
         onCreate(db);
     }

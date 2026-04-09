@@ -1,6 +1,8 @@
 package com.example.hrm.activities;
 
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -11,9 +13,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,11 +38,13 @@ public class EmployeeActivity extends AppCompatActivity {
     private RecyclerView recyclerViewEmployee;
     private FloatingActionButton fabAddEmployee;
     private EditText edtSearchEmployee;
-
     private EmployeeDAO employeeDAO;
     private List<Employee> employeeList;
     private List<Employee> originalList;
     private EmployeeAdapter employeeAdapter;
+    private String currentAvatarUri = "";
+    private ImageView imgDialogAvatar;
+    private static final int PICK_IMAGE_REQUEST = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,16 +84,11 @@ public class EmployeeActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(Employee employee) {
-                Toast.makeText(
-                        EmployeeActivity.this,
-                        "Nhân viên: " + employee.getHoTen(),
-                        Toast.LENGTH_SHORT
-                ).show();
+                Toast.makeText(EmployeeActivity.this, "Nhân viên: " + employee.getHoTen(), Toast.LENGTH_SHORT).show();
             }
         });
 
         recyclerViewEmployee.setAdapter(employeeAdapter);
-
         fabAddEmployee.setOnClickListener(v -> showEmployeeDialog(null, false));
     }
 
@@ -100,34 +101,27 @@ public class EmployeeActivity extends AppCompatActivity {
     private void loadEmployees() {
         employeeList.clear();
         originalList.clear();
-
         List<Employee> data = employeeDAO.getAllEmployees();
         employeeList.addAll(data);
         originalList.addAll(data);
-
         employeeAdapter.notifyDataSetChanged();
     }
 
     private void initSearch() {
         edtSearchEmployee.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 filterEmployees(s.toString());
             }
-
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
     private void filterEmployees(String keyword) {
         employeeList.clear();
-
         if (keyword.isEmpty()) {
             employeeList.addAll(originalList);
         } else {
@@ -139,8 +133,27 @@ public class EmployeeActivity extends AppCompatActivity {
                 }
             }
         }
-
         employeeAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri imageUri = data.getData();
+
+            final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            try {
+                getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
+
+            currentAvatarUri = imageUri.toString();
+            if (imgDialogAvatar != null) {
+                imgDialogAvatar.setImageURI(imageUri);
+            }
+        }
     }
 
     private void showEmployeeDialog(Employee employee, boolean isEdit) {
@@ -148,6 +161,7 @@ public class EmployeeActivity extends AppCompatActivity {
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_employee, null);
         builder.setView(view);
 
+        imgDialogAvatar = view.findViewById(R.id.imgDialogAvatar);
         EditText edtMaNv = view.findViewById(R.id.edtMaNv);
         EditText edtHoTen = view.findViewById(R.id.edtHoTen);
         EditText edtNgaySinh = view.findViewById(R.id.edtNgaySinh);
@@ -165,37 +179,34 @@ public class EmployeeActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
 
+        imgDialogAvatar.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
+            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivityForResult(intent, PICK_IMAGE_REQUEST);
+        });
+
         List<Department> departmentList = employeeDAO.getAllDepartments();
         List<String> departmentNames = new ArrayList<>();
-        for (Department d : departmentList) {
-            departmentNames.add(d.getTenPhong());
-        }
+        for (Department d : departmentList) { departmentNames.add(d.getTenPhong()); }
 
-        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                new String[]{"Nam", "Nữ", "Khác"}
-        );
-        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerGioiTinh.setAdapter(genderAdapter);
+        ArrayAdapter<String> adapterGT = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Nam", "Nữ", "Khác"});
+        adapterGT.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerGioiTinh.setAdapter(adapterGT);
 
-        ArrayAdapter<String> departmentAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                departmentNames
-        );
-        departmentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerPhongBan.setAdapter(departmentAdapter);
+        ArrayAdapter<String> adapterPB = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, departmentNames);
+        adapterPB.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPhongBan.setAdapter(adapterPB);
 
-        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                new String[]{"Đang làm", "Đã nghỉ"}
-        );
-        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerTrangThai.setAdapter(statusAdapter);
+        ArrayAdapter<String> adapterTT = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Đang làm", "Đã nghỉ"});
+        adapterTT.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTrangThai.setAdapter(adapterTT);
 
         if (isEdit && employee != null) {
+            currentAvatarUri = employee.getAvatar() != null ? employee.getAvatar() : "";
+            if (!currentAvatarUri.isEmpty()) { imgDialogAvatar.setImageURI(Uri.parse(currentAvatarUri)); }
             edtMaNv.setText(employee.getMaNv());
             edtHoTen.setText(employee.getHoTen());
             edtNgaySinh.setText(employee.getNgaySinh());
@@ -209,6 +220,8 @@ public class EmployeeActivity extends AppCompatActivity {
             setSpinnerSelection(spinnerGioiTinh, employee.getGioiTinh());
             setDepartmentSelection(spinnerPhongBan, departmentList, employee.getIdPhongBan());
             spinnerTrangThai.setSelection(employee.getTrangThai() == 1 ? 0 : 1);
+        } else {
+            currentAvatarUri = "";
         }
 
         btnCloseEmployeeDialog.setOnClickListener(v -> dialog.dismiss());
@@ -216,87 +229,58 @@ public class EmployeeActivity extends AppCompatActivity {
         btnSaveEmployee.setOnClickListener(v -> {
             String maNv = edtMaNv.getText().toString().trim();
             String hoTen = edtHoTen.getText().toString().trim();
-            String ngaySinh = edtNgaySinh.getText().toString().trim();
-            String gioiTinh = spinnerGioiTinh.getSelectedItem().toString();
-            String soDt = edtSoDt.getText().toString().trim();
-            String email = edtEmail.getText().toString().trim();
             String chucVu = edtChucVu.getText().toString().trim();
-            String ngayVaoLam = edtNgayVaoLam.getText().toString().trim();
             String heSoLuongStr = edtHeSoLuong.getText().toString().trim();
-            int trangThai = spinnerTrangThai.getSelectedItemPosition() == 0 ? 1 : 0;
 
-            if (TextUtils.isEmpty(maNv)) {
-                edtMaNv.setError("Không được để trống mã nhân viên");
-                return;
-            }
-
-            if (TextUtils.isEmpty(hoTen)) {
-                edtHoTen.setError("Không được để trống họ tên");
-                return;
-            }
-
-            if (!TextUtils.isEmpty(email) && !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                edtEmail.setError("Email không hợp lệ");
-                return;
-            }
-
-            if (TextUtils.isEmpty(heSoLuongStr)) {
-                edtHeSoLuong.setError("Không được để trống hệ số lương");
-                return;
-            }
+            if (TextUtils.isEmpty(maNv)) { edtMaNv.setError("Cần mã NV"); return; }
+            if (TextUtils.isEmpty(hoTen)) { edtHoTen.setError("Cần họ tên"); return; }
+            if (TextUtils.isEmpty(chucVu)) { edtChucVu.setError("Cần chức vụ"); return; }
 
             double heSoLuong;
-            try {
-                heSoLuong = Double.parseDouble(heSoLuongStr);
-            } catch (Exception e) {
-                edtHeSoLuong.setError("Hệ số lương không hợp lệ");
-                return;
-            }
+            try { heSoLuong = Double.parseDouble(heSoLuongStr); } catch (Exception e) { heSoLuong = 0; }
 
-            int selectedDepartmentPosition = spinnerPhongBan.getSelectedItemPosition();
-            int idPhongBan = departmentList.get(selectedDepartmentPosition).getIdPhongBan();
+            int idPhongBan = departmentList.get(spinnerPhongBan.getSelectedItemPosition()).getIdPhongBan();
+            int trangThai = spinnerTrangThai.getSelectedItemPosition() == 0 ? 1 : 0;
 
             if (isEdit && employee != null) {
                 employee.setHoTen(hoTen);
-                employee.setNgaySinh(ngaySinh);
-                employee.setGioiTinh(gioiTinh);
-                employee.setSoDt(soDt);
-                employee.setEmail(email);
-                employee.setIdPhongBan(idPhongBan);
                 employee.setChucVu(chucVu);
-                employee.setNgayVaoLam(ngayVaoLam);
+                employee.setNgaySinh(edtNgaySinh.getText().toString());
+                employee.setGioiTinh(spinnerGioiTinh.getSelectedItem().toString());
+                employee.setSoDt(edtSoDt.getText().toString());
+                employee.setEmail(edtEmail.getText().toString());
+                employee.setIdPhongBan(idPhongBan);
+                employee.setNgayVaoLam(edtNgayVaoLam.getText().toString());
                 employee.setHeSoLuong(heSoLuong);
                 employee.setTrangThai(trangThai);
+                employee.setAvatar(currentAvatarUri);
 
-                boolean result = employeeDAO.updateEmployee(employee);
-                if (result) {
-                    Toast.makeText(this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                if (employeeDAO.updateEmployee(employee)) {
                     loadEmployees();
                     dialog.dismiss();
-                } else {
-                    Toast.makeText(this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Đã cập nhật", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Employee newEmployee = new Employee();
                 newEmployee.setMaNv(maNv);
                 newEmployee.setHoTen(hoTen);
-                newEmployee.setNgaySinh(ngaySinh);
-                newEmployee.setGioiTinh(gioiTinh);
-                newEmployee.setSoDt(soDt);
-                newEmployee.setEmail(email);
-                newEmployee.setIdPhongBan(idPhongBan);
                 newEmployee.setChucVu(chucVu);
-                newEmployee.setNgayVaoLam(ngayVaoLam);
+                newEmployee.setNgaySinh(edtNgaySinh.getText().toString());
+                newEmployee.setGioiTinh(spinnerGioiTinh.getSelectedItem().toString());
+                newEmployee.setSoDt(edtSoDt.getText().toString());
+                newEmployee.setEmail(edtEmail.getText().toString());
+                newEmployee.setIdPhongBan(idPhongBan);
+                newEmployee.setNgayVaoLam(edtNgayVaoLam.getText().toString());
                 newEmployee.setHeSoLuong(heSoLuong);
                 newEmployee.setTrangThai(trangThai);
+                newEmployee.setAvatar(currentAvatarUri);
 
-                boolean result = employeeDAO.insertEmployee(newEmployee);
-                if (result) {
-                    Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
+                if (employeeDAO.insertEmployee(newEmployee)) {
                     loadEmployees();
                     dialog.dismiss();
+                    Toast.makeText(this, "Đã thêm", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(this, "Mã nhân viên đã tồn tại", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Mã trùng!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -323,19 +307,13 @@ public class EmployeeActivity extends AppCompatActivity {
 
     private void confirmDeleteEmployee(Employee employee) {
         new AlertDialog.Builder(this)
-                .setTitle("Xóa nhân viên")
-                .setMessage("Bạn có chắc muốn xóa không?")
+                .setTitle("Xóa?")
+                .setMessage("Chắc chắn không?")
                 .setPositiveButton("Xóa", (dialog, which) -> {
-                    boolean result = employeeDAO.deleteEmployee(employee.getIdNv());
-
-                    if (result) {
-                        Toast.makeText(this, "Xóa thành công", Toast.LENGTH_SHORT).show();
+                    if (employeeDAO.deleteEmployee(employee.getIdNv())) {
                         loadEmployees();
-                    } else {
-                        Toast.makeText(this, "Không thể xóa", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Hủy", null)
-                .show();
+                .setNegativeButton("Hủy", null).show();
     }
 }

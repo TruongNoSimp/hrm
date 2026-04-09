@@ -1,5 +1,6 @@
 package com.example.hrm.adapters;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,16 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
         holder.tvPhongBan.setText("Phòng ban: " + (employee.getTenPhongBan() == null ? "" : employee.getTenPhongBan()));
         holder.tvChucVu.setText("Chức vụ: " + employee.getChucVu());
 
+        if (employee.getAvatar() != null && !employee.getAvatar().isEmpty()) {
+            try {
+                holder.imgAvatar.setImageURI(Uri.parse(employee.getAvatar()));
+            } catch (Exception e) {
+                holder.imgAvatar.setImageResource(R.drawable.ic_avatar_default);
+            }
+        } else {
+            holder.imgAvatar.setImageResource(R.drawable.ic_avatar_default);
+        }
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onItemClick(employee);
@@ -73,7 +84,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
 
     public static class EmployeeViewHolder extends RecyclerView.ViewHolder {
         TextView tvMaNv, tvHoTen, tvPhongBan, tvChucVu;
-        ImageView imgEditEmployee, imgDeleteEmployee;
+        ImageView imgEditEmployee, imgDeleteEmployee, imgAvatar; // Thêm imgAvatar
 
         public EmployeeViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -83,6 +94,9 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
             tvChucVu = itemView.findViewById(R.id.tvChucVu);
             imgEditEmployee = itemView.findViewById(R.id.imgEditEmployee);
             imgDeleteEmployee = itemView.findViewById(R.id.imgDeleteEmployee);
+
+            // Ánh xạ ImageView cho ảnh nhân viên ở bên phải
+            imgAvatar = itemView.findViewById(R.id.imgAvatar);
         }
     }
 }

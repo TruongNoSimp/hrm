@@ -47,6 +47,7 @@ public class EmployeeDAO {
                 e.setHeSoLuong(cursor.getDouble(cursor.getColumnIndexOrThrow("he_so_luong")));
                 e.setTrangThai(cursor.getInt(cursor.getColumnIndexOrThrow("trang_thai")));
                 e.setTenPhongBan(cursor.getString(cursor.getColumnIndexOrThrow("ten_phong")));
+                e.setAvatar(cursor.getString(cursor.getColumnIndexOrThrow("avatar")));
                 list.add(e);
             } while (cursor.moveToNext());
         }
@@ -55,7 +56,6 @@ public class EmployeeDAO {
         db.close();
         return list;
     }
-
     public List<Department> getAllDepartments() {
         List<Department> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -104,6 +104,7 @@ public class EmployeeDAO {
         values.put("chuc_vu", e.getChucVu());
         values.put("ngay_vao_lam", e.getNgayVaoLam());
         values.put("he_so_luong", e.getHeSoLuong());
+        values.put("avatar", e.getAvatar());
         values.put("trang_thai", e.getTrangThai());
 
         long result = db.insert("NhanVien", null, values);
@@ -123,6 +124,7 @@ public class EmployeeDAO {
         values.put("chuc_vu", e.getChucVu());
         values.put("ngay_vao_lam", e.getNgayVaoLam());
         values.put("he_so_luong", e.getHeSoLuong());
+        values.put("avatar", e.getAvatar());
         values.put("trang_thai", e.getTrangThai());
 
         int result = db.update(
@@ -142,12 +144,16 @@ public class EmployeeDAO {
         db.close();
         return result > 0;
     }
+
     public int getEmployeeCountFromDB() {
-        try {
-            return getAllEmployees().size();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM NhanVien", null);
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
         }
+        cursor.close();
+        db.close();
+        return count;
     }
 }
