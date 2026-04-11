@@ -29,6 +29,12 @@
             android:name=".activities.EmployeeActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.DisciplineActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.RewardActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
     </application>

@@ -19,7 +19,6 @@ import com.example.hrm.R;
 import com.example.hrm.dao.DepartmentDAO;
 import com.google.android.material.navigation.NavigationView;
 
-import com.example.hrm.activities.EmployeeActivity;
 import com.example.hrm.dao.EmployeeDAO;
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -161,8 +160,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         menuEmployee.setOnClickListener(v -> openEmployee());
         menuAttendance.setOnClickListener(v -> showFeatureMessage("Chấm công"));
         menuLeave.setOnClickListener(v -> showFeatureMessage("Nghỉ phép"));
-        menuReward.setOnClickListener(v -> showFeatureMessage("Khen thưởng"));
-        menuDiscipline.setOnClickListener(v -> showFeatureMessage("Kỷ luật"));
+        menuReward.setOnClickListener(v -> openReward());
+        menuDiscipline.setOnClickListener(v -> openDiscipline());
     }
 
     private void openEmployee() {
@@ -171,7 +170,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private void openDepartment() {
         startActivity(new Intent(HomeActivity.this, DepartmentActivity.class));
     }
-
+    private void openDiscipline() {
+        startActivity(new Intent(HomeActivity.this, DisciplineActivity.class));
+    }
+    private void openReward() {
+        startActivity(new Intent(HomeActivity.this, RewardActivity.class));
+    }
     private void showFeatureMessage(String featureName) {
         Toast.makeText(this, "Chức năng " + featureName + " sẽ làm sau", Toast.LENGTH_SHORT).show();
     }
@@ -196,10 +200,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             showFeatureMessage("Nghỉ phép");
 
         } else if (id == R.id.nav_reward) {
-            showFeatureMessage("Khen thưởng");
+            openReward();
 
         } else if (id == R.id.nav_discipline) {
-            showFeatureMessage("Kỷ luật");
+            openDiscipline();
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);

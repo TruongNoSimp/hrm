@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "hrm.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 6;
 
     public static final String TABLE_PHONGBAN = "PhongBan";
     public static final String COL_ID_PHONG_BAN = "id_phong_ban";
@@ -57,12 +57,36 @@ public class DBHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY(id_phong_ban) REFERENCES PhongBan(id_phong_ban)" +
                 ")";
         db.execSQL(CREATE_TABLE_NHAN_VIEN);
+
+        String CREATE_TABLE_KYLUAT = "CREATE TABLE KyLuat (" +
+                "id_ky_luat INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "id_nv INTEGER, " +
+                "ngay_quyet_dinh TEXT, " +
+                "hinh_thuc TEXT, " +
+                "so_tien_phat REAL, " +
+                "ly_do TEXT, " +
+                "FOREIGN KEY(id_nv) REFERENCES NhanVien(id_nv)" +
+                ")";
+        db.execSQL(CREATE_TABLE_KYLUAT);
+
+        String CREATE_TABLE_KHENTHUONG = "CREATE TABLE KhenThuong (" +
+                "id_khen_thuong INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "id_nv INTEGER, " +
+                "ngay_quyet_dinh TEXT, " +
+                "hinh_thuc TEXT, " +
+                "so_tien_thuong REAL, " +
+                "ly_do TEXT, " +
+                "FOREIGN KEY(id_nv) REFERENCES NhanVien(id_nv)" +
+                ")";
+        db.execSQL(CREATE_TABLE_KHENTHUONG);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS NhanVien");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PHONGBAN);
+        db.execSQL("DROP TABLE IF EXISTS KyLuat");
+        db.execSQL("DROP TABLE IF EXISTS KhenThuong");
         onCreate(db);
     }
 }
