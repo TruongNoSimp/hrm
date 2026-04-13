@@ -1,6 +1,7 @@
 package com.example.hrm.activities;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import com.example.hrm.models.Employee;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class EmployeeActivity extends AppCompatActivity {
@@ -144,7 +146,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
             final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION);
             try {
-                getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
+                getContentResolver().takePersistableUriPermission(imageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             } catch (SecurityException e) {
                 e.printStackTrace();
             }
@@ -175,6 +177,8 @@ public class EmployeeActivity extends AppCompatActivity {
         Spinner spinnerTrangThai = view.findViewById(R.id.spinnerTrangThai);
         Button btnSaveEmployee = view.findViewById(R.id.btnSaveEmployee);
         Button btnCloseEmployeeDialog = view.findViewById(R.id.btnCloseEmployeeDialog);
+        Button btnNgaySinh = view.findViewById(R.id.btnNgaySinh);
+        Button btnNgayVaoLam = view.findViewById(R.id.btnNgayVaoLam);
 
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -187,6 +191,9 @@ public class EmployeeActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivityForResult(intent, PICK_IMAGE_REQUEST);
         });
+
+        btnNgaySinh.setOnClickListener(v -> showDatePicker(edtNgaySinh, true));
+        btnNgayVaoLam.setOnClickListener(v -> showDatePicker(edtNgayVaoLam, false));
 
         List<Department> departmentList = employeeDAO.getAllDepartments();
         List<String> departmentNames = new ArrayList<>();
@@ -308,12 +315,42 @@ public class EmployeeActivity extends AppCompatActivity {
     private void confirmDeleteEmployee(Employee employee) {
         new AlertDialog.Builder(this)
                 .setTitle("Xóa?")
-                .setMessage("Chắc chắn không?")
+                .setMessage("Ban có chắc chắn xóa nhân viên này không?")
                 .setPositiveButton("Xóa", (dialog, which) -> {
                     if (employeeDAO.deleteEmployee(employee.getIdNv())) {
                         loadEmployees();
                     }
                 })
                 .setNegativeButton("Hủy", null).show();
+    }
+
+    private void showDatePicker(EditText editText, boolean isNgaySinh) {
+        Calendar calendar = Calendar.getInstance();
+
+        // Nếu đã có ngày được chọn, parse nó để set initial date
+        if (!editText.getText().toString().isEmpty()) {
+            try {
+                String[] parts = editText.getText().toString().split("-");
+                if (parts.length == 3) {
+                    calendar.set(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) - 1, Integer.parseInt(parts[2]));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    String date = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                    editText.setText(date);
+                },
+                year, month, day
+        );
+        datePickerDialog.show();
     }
 }

@@ -26,7 +26,7 @@ public class EmployeeDAO {
 
         String sql = "SELECT nv.*, pb.ten_phong " +
                 "FROM NhanVien nv " +
-                "LEFT JOIN PhongBan pb ON nv.id_phong_ban = pb.id_phong_ban " +
+                "LEFT JOIN PhongBan pb ON nv.id_phong_ban_fk = pb.id_phong_ban " +
                 "ORDER BY nv.id_nv DESC";
 
         Cursor cursor = db.rawQuery(sql, null);
@@ -41,7 +41,7 @@ public class EmployeeDAO {
                 e.setGioiTinh(cursor.getString(cursor.getColumnIndexOrThrow("gioi_tinh")));
                 e.setSoDt(cursor.getString(cursor.getColumnIndexOrThrow("so_dt")));
                 e.setEmail(cursor.getString(cursor.getColumnIndexOrThrow("email")));
-                e.setIdPhongBan(cursor.getInt(cursor.getColumnIndexOrThrow("id_phong_ban")));
+                e.setIdPhongBan(cursor.getInt(cursor.getColumnIndexOrThrow("id_phong_ban_fk")));
                 e.setChucVu(cursor.getString(cursor.getColumnIndexOrThrow("chuc_vu")));
                 e.setNgayVaoLam(cursor.getString(cursor.getColumnIndexOrThrow("ngay_vao_lam")));
                 e.setHeSoLuong(cursor.getDouble(cursor.getColumnIndexOrThrow("he_so_luong")));
@@ -100,7 +100,7 @@ public class EmployeeDAO {
         values.put("gioi_tinh", e.getGioiTinh());
         values.put("so_dt", e.getSoDt());
         values.put("email", e.getEmail());
-        values.put("id_phong_ban", e.getIdPhongBan());
+        values.put("id_phong_ban_fk", e.getIdPhongBan());
         values.put("chuc_vu", e.getChucVu());
         values.put("ngay_vao_lam", e.getNgayVaoLam());
         values.put("he_so_luong", e.getHeSoLuong());
@@ -120,7 +120,7 @@ public class EmployeeDAO {
         values.put("gioi_tinh", e.getGioiTinh());
         values.put("so_dt", e.getSoDt());
         values.put("email", e.getEmail());
-        values.put("id_phong_ban", e.getIdPhongBan());
+        values.put("id_phong_ban_fk", e.getIdPhongBan());
         values.put("chuc_vu", e.getChucVu());
         values.put("ngay_vao_lam", e.getNgayVaoLam());
         values.put("he_so_luong", e.getHeSoLuong());

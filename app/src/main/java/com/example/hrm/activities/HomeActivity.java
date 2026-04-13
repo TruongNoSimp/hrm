@@ -159,7 +159,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         menuDepartment.setOnClickListener(v -> openDepartment());
         menuEmployee.setOnClickListener(v -> openEmployee());
-        menuAttendance.setOnClickListener(v -> showFeatureMessage("Chấm công"));
+        menuAttendance.setOnClickListener(v -> openAttendance());
         menuLeave.setOnClickListener(v -> showFeatureMessage("Nghỉ phép"));
         menuReward.setOnClickListener(v -> showFeatureMessage("Khen thưởng"));
         menuDiscipline.setOnClickListener(v -> showFeatureMessage("Kỷ luật"));
@@ -170,6 +170,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
     private void openDepartment() {
         startActivity(new Intent(HomeActivity.this, DepartmentActivity.class));
+    }
+
+    private void openAttendance() {
+        startActivity(new Intent(HomeActivity.this, AttendanceActivity.class));
     }
 
     private void showFeatureMessage(String featureName) {
@@ -190,7 +194,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             openEmployee();
 
         } else if (id == R.id.nav_attendance) {
-            showFeatureMessage("Chấm công");
+            openAttendance();
 
         } else if (id == R.id.nav_leave) {
             showFeatureMessage("Nghỉ phép");

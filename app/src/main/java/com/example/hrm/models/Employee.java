@@ -14,6 +14,7 @@ public class Employee {
     private String ngayVaoLam;
     private double heSoLuong;
     private int trangThai;
+    private String gioVao;
     private String avatar;
     public Employee() {
     }
@@ -126,5 +127,13 @@ public class Employee {
     }
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getGioVao() {
+        return gioVao;
+    }
+
+    public void setGioVao(String gioVao) {
+        this.gioVao = gioVao;
     }
 }
