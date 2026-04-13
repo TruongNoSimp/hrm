@@ -9,13 +9,14 @@ import androidx.annotation.Nullable;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "hrm.db";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
 
     // Table names
     public static final String TABLE_PHONG_BAN = "PhongBan";
     public static final String TABLE_NHAN_VIEN = "NhanVien";
     public static final String TABLE_KY_LUAT = "KyLuat";
     public static final String TABLE_KHEN_THUONG = "KhenThuong";
+    public static final String TAI_KHOAN = "TaiKhoan";
 
     // PhongBan columns
     public static final String COL_ID_PHONG_BAN = "id_phong_ban";
@@ -47,6 +48,18 @@ public class DBHelper extends SQLiteOpenHelper {
     // KhenThuong columns
     public static final String COL_ID_KHEN_THUONG = "id_khen_thuong";
     public static final String COL_SO_TIEN_THUONG = "so_tien_thuong";
+    // tai khoan col
+    public static final String COL_ID = "id_user";
+    public static final String COL_USERNAME = "username";
+    public static final String COL_PASSWORD = "password";
+
+
+    private static final String CREATE_TABLE_ACCOUNT = "CREATE TABLE " + TAI_KHOAN + " ("
+            + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + COL_USERNAME + " TEXT UNIQUE NOT NULL, "
+            + COL_PASSWORD + " TEXT NOT NULL)";
+
+
 
     private static final String CREATE_TABLE_PHONG_BAN =
             "CREATE TABLE " + TABLE_PHONG_BAN + " (" +
@@ -109,7 +122,10 @@ public class DBHelper extends SQLiteOpenHelper {
             {"PB07", "Chăm sóc khách hàng", "Hỗ trợ và tiếp nhận phản hồi"},
             {"PB08", "Kỹ thuật", "Bảo trì và hỗ trợ kỹ thuật"}
     };
-
+    private static final String[][] TAI_KHOAN_SEED = {
+            {"admin", "123456"},
+            {"manager", "123456"}
+    };
     public DBHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -128,15 +144,14 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(CREATE_TABLE_NHAN_VIEN);
             db.execSQL(CREATE_TABLE_KY_LUAT);
             db.execSQL(CREATE_TABLE_KHEN_THUONG);
-
+            db.execSQL(CREATE_TABLE_ACCOUNT);
             seedPhongBan(db);
-
+            seedTaiKhoan(db);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
         }
     }
-
     private void seedPhongBan(SQLiteDatabase db) {
         for (String[] pb : PHONG_BAN_SEED) {
             db.execSQL(
@@ -148,7 +163,16 @@ public class DBHelper extends SQLiteOpenHelper {
             );
         }
     }
-
+    private void seedTaiKhoan(SQLiteDatabase db) {
+        for (String[] tk : TAI_KHOAN_SEED) {
+            db.execSQL(
+                    "INSERT INTO " + TAI_KHOAN + " (" +
+                            COL_USERNAME + ", " +
+                            COL_PASSWORD + ") VALUES (?, ?)",
+                    new Object[]{tk[0], tk[1]}
+            );
+        }
+    }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.beginTransaction();
@@ -157,7 +181,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_KHEN_THUONG);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_NHAN_VIEN);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_PHONG_BAN);
-
+            db.execSQL("DROP TABLE IF EXISTS " + TAI_KHOAN);
             onCreate(db);
 
             db.setTransactionSuccessful();

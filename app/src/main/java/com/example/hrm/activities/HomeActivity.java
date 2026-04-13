@@ -1,6 +1,7 @@
 package com.example.hrm.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
@@ -20,6 +21,7 @@ import com.example.hrm.dao.DepartmentDAO;
 import com.google.android.material.navigation.NavigationView;
 
 import com.example.hrm.dao.EmployeeDAO;
+
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
@@ -51,6 +53,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getSharedPreferences("SESSION", MODE_PRIVATE);
+        boolean isLogin = prefs.getBoolean("isLogin", false);
+
+        if (!isLogin) {
+            startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_home);
 
         initViews();
@@ -107,16 +119,27 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setupAccountFooter() {
-        tvAccountName.setText("truong");
+        SharedPreferences prefs = getSharedPreferences("SESSION", MODE_PRIVATE);
+        String username = prefs.getString("username", "Admin");
+
+        tvAccountName.setText(username);
         tvAccountRole.setText("Quản trị viên");
 
         btnViewProfile.setOnClickListener(v ->
                 Toast.makeText(this, "Mở thông tin tài khoản", Toast.LENGTH_SHORT).show()
         );
 
-        btnLogout.setOnClickListener(v ->
-                Toast.makeText(this, "Đăng xuất", Toast.LENGTH_SHORT).show()
-        );
+        btnLogout.setOnClickListener(v -> {
+            SharedPreferences.Editor editor =
+                    getSharedPreferences("SESSION", MODE_PRIVATE).edit();
+            editor.clear();
+            editor.apply();
+
+            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
     }
 
     private void loadDashboardData() {
@@ -140,6 +163,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             return 0;
         }
     }
+
     private int getEmployeeCountFromDB() {
         try {
             EmployeeDAO employeeDAO = new EmployeeDAO(this);
@@ -167,15 +191,19 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private void openEmployee() {
         startActivity(new Intent(HomeActivity.this, EmployeeActivity.class));
     }
+
     private void openDepartment() {
         startActivity(new Intent(HomeActivity.this, DepartmentActivity.class));
     }
+
     private void openDiscipline() {
         startActivity(new Intent(HomeActivity.this, DisciplineActivity.class));
     }
+
     private void openReward() {
         startActivity(new Intent(HomeActivity.this, RewardActivity.class));
     }
+
     private void showFeatureMessage(String featureName) {
         Toast.makeText(this, "Chức năng " + featureName + " sẽ làm sau", Toast.LENGTH_SHORT).show();
     }
@@ -186,22 +214,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_home) {
             Toast.makeText(this, "Bạn đang ở Trang chủ", Toast.LENGTH_SHORT).show();
-
         } else if (id == R.id.nav_department) {
             openDepartment();
-
         } else if (id == R.id.nav_employee) {
             openEmployee();
-
         } else if (id == R.id.nav_attendance) {
             showFeatureMessage("Chấm công");
-
         } else if (id == R.id.nav_leave) {
             showFeatureMessage("Nghỉ phép");
-
         } else if (id == R.id.nav_reward) {
             openReward();
-
         } else if (id == R.id.nav_discipline) {
             openDiscipline();
         }
