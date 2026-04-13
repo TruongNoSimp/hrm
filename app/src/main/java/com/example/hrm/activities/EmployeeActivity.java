@@ -32,6 +32,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.example.hrm.listeners.OnItemActionListener;
 
 public class EmployeeActivity extends AppCompatActivity {
 
@@ -71,7 +72,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
         recyclerViewEmployee.setLayoutManager(new LinearLayoutManager(this));
 
-        employeeAdapter = new EmployeeAdapter(employeeList, new EmployeeAdapter.OnEmployeeActionListener() {
+        employeeAdapter = new EmployeeAdapter(employeeList, new OnItemActionListener<Employee>() {
             @Override
             public void onEdit(Employee employee) {
                 showEmployeeDialog(employee, true);
@@ -157,9 +158,8 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void showEmployeeDialog(Employee employee, boolean isEdit) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_employee, null);
-        builder.setView(view);
+        AlertDialog dialog = createEmployeeDialog(view);
 
         imgDialogAvatar = view.findViewById(R.id.imgDialogAvatar);
         EditText edtMaNv = view.findViewById(R.id.edtMaNv);
@@ -176,9 +176,35 @@ public class EmployeeActivity extends AppCompatActivity {
         Button btnSaveEmployee = view.findViewById(R.id.btnSaveEmployee);
         Button btnCloseEmployeeDialog = view.findViewById(R.id.btnCloseEmployeeDialog);
 
+        List<Department> departmentList = getDepartmentList();
+        setupAvatarClick();
+        setupGenderSpinner(spinnerGioiTinh);
+        setupDepartmentSpinner(spinnerPhongBan, departmentList);
+        setupStatusSpinner(spinnerTrangThai);
+        bindEmployeeData(employee, isEdit, departmentList, edtMaNv, edtHoTen, edtNgaySinh,
+                edtSoDt, edtEmail, edtChucVu, edtNgayVaoLam, edtHeSoLuong,
+                spinnerGioiTinh, spinnerPhongBan, spinnerTrangThai);
+        setupCloseButton(dialog, btnCloseEmployeeDialog);
+        setupSaveEmployeeButton(dialog, employee, isEdit, departmentList,
+                edtMaNv, edtHoTen, edtNgaySinh, edtSoDt, edtEmail, edtChucVu,
+                edtNgayVaoLam, edtHeSoLuong, spinnerGioiTinh, spinnerPhongBan,
+                spinnerTrangThai, btnSaveEmployee);
+    }
+
+    private AlertDialog createEmployeeDialog(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(view);
         AlertDialog dialog = builder.create();
         dialog.show();
+        return dialog;
+    }
 
+    private List<Department> getDepartmentList() {
+        List<Department> list = employeeDAO.getAllDepartments();
+        return list != null ? list : new ArrayList<>();
+    }
+
+    private void setupAvatarClick() {
         imgDialogAvatar.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -187,26 +213,57 @@ public class EmployeeActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivityForResult(intent, PICK_IMAGE_REQUEST);
         });
+    }
 
-        List<Department> departmentList = employeeDAO.getAllDepartments();
+    private void setupGenderSpinner(Spinner spinnerGioiTinh) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                new String[]{"Nam", "Nữ", "Khác"}
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerGioiTinh.setAdapter(adapter);
+    }
+
+    private void setupDepartmentSpinner(Spinner spinnerPhongBan, List<Department> departmentList) {
         List<String> departmentNames = new ArrayList<>();
-        for (Department d : departmentList) { departmentNames.add(d.getTenPhong()); }
+        for (Department d : departmentList) {
+            departmentNames.add(d.getTenPhong());
+        }
 
-        ArrayAdapter<String> adapterGT = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Nam", "Nữ", "Khác"});
-        adapterGT.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerGioiTinh.setAdapter(adapterGT);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                departmentNames
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPhongBan.setAdapter(adapter);
+    }
 
-        ArrayAdapter<String> adapterPB = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, departmentNames);
-        adapterPB.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerPhongBan.setAdapter(adapterPB);
+    private void setupStatusSpinner(Spinner spinnerTrangThai) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                new String[]{"Đang làm", "Đã nghỉ"}
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTrangThai.setAdapter(adapter);
+    }
 
-        ArrayAdapter<String> adapterTT = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Đang làm", "Đã nghỉ"});
-        adapterTT.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerTrangThai.setAdapter(adapterTT);
-
+    private void bindEmployeeData(Employee employee, boolean isEdit,
+                                  List<Department> departmentList,
+                                  EditText edtMaNv, EditText edtHoTen, EditText edtNgaySinh,
+                                  EditText edtSoDt, EditText edtEmail, EditText edtChucVu,
+                                  EditText edtNgayVaoLam, EditText edtHeSoLuong,
+                                  Spinner spinnerGioiTinh, Spinner spinnerPhongBan,
+                                  Spinner spinnerTrangThai) {
         if (isEdit && employee != null) {
             currentAvatarUri = employee.getAvatar() != null ? employee.getAvatar() : "";
-            if (!currentAvatarUri.isEmpty()) { imgDialogAvatar.setImageURI(Uri.parse(currentAvatarUri)); }
+
+            if (!currentAvatarUri.isEmpty()) {
+                imgDialogAvatar.setImageURI(Uri.parse(currentAvatarUri));
+            }
+
             edtMaNv.setText(employee.getMaNv());
             edtHoTen.setText(employee.getHoTen());
             edtNgaySinh.setText(employee.getNgaySinh());
@@ -223,67 +280,147 @@ public class EmployeeActivity extends AppCompatActivity {
         } else {
             currentAvatarUri = "";
         }
+    }
 
-        btnCloseEmployeeDialog.setOnClickListener(v -> dialog.dismiss());
+    private void setupCloseButton(AlertDialog dialog, Button btnClose) {
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+    }
 
+    private void setupSaveEmployeeButton(AlertDialog dialog, Employee employee, boolean isEdit,
+                                         List<Department> departmentList,
+                                         EditText edtMaNv, EditText edtHoTen, EditText edtNgaySinh,
+                                         EditText edtSoDt, EditText edtEmail, EditText edtChucVu,
+                                         EditText edtNgayVaoLam, EditText edtHeSoLuong,
+                                         Spinner spinnerGioiTinh, Spinner spinnerPhongBan,
+                                         Spinner spinnerTrangThai, Button btnSaveEmployee) {
         btnSaveEmployee.setOnClickListener(v -> {
-            String maNv = edtMaNv.getText().toString().trim();
-            String hoTen = edtHoTen.getText().toString().trim();
-            String chucVu = edtChucVu.getText().toString().trim();
-            String heSoLuongStr = edtHeSoLuong.getText().toString().trim();
+            EmployeeInput input = getEmployeeInput(
+                    edtMaNv, edtHoTen, edtNgaySinh, edtSoDt, edtEmail,
+                    edtChucVu, edtNgayVaoLam, edtHeSoLuong,
+                    spinnerGioiTinh, spinnerPhongBan, spinnerTrangThai,
+                    departmentList
+            );
 
-            if (TextUtils.isEmpty(maNv)) { edtMaNv.setError("Cần mã NV"); return; }
-            if (TextUtils.isEmpty(hoTen)) { edtHoTen.setError("Cần họ tên"); return; }
-            if (TextUtils.isEmpty(chucVu)) { edtChucVu.setError("Cần chức vụ"); return; }
-
-            double heSoLuong;
-            try { heSoLuong = Double.parseDouble(heSoLuongStr); } catch (Exception e) { heSoLuong = 0; }
-
-            int idPhongBan = departmentList.get(spinnerPhongBan.getSelectedItemPosition()).getIdPhongBan();
-            int trangThai = spinnerTrangThai.getSelectedItemPosition() == 0 ? 1 : 0;
+            if (!validateEmployeeInput(input, edtMaNv, edtHoTen, edtChucVu)) {
+                return;
+            }
 
             if (isEdit && employee != null) {
-                employee.setHoTen(hoTen);
-                employee.setChucVu(chucVu);
-                employee.setNgaySinh(edtNgaySinh.getText().toString());
-                employee.setGioiTinh(spinnerGioiTinh.getSelectedItem().toString());
-                employee.setSoDt(edtSoDt.getText().toString());
-                employee.setEmail(edtEmail.getText().toString());
-                employee.setIdPhongBan(idPhongBan);
-                employee.setNgayVaoLam(edtNgayVaoLam.getText().toString());
-                employee.setHeSoLuong(heSoLuong);
-                employee.setTrangThai(trangThai);
-                employee.setAvatar(currentAvatarUri);
-
-                if (employeeDAO.updateEmployee(employee)) {
-                    loadEmployees();
-                    dialog.dismiss();
-                    Toast.makeText(this, "Đã cập nhật", Toast.LENGTH_SHORT).show();
-                }
+                updateEmployee(dialog, employee, input);
             } else {
-                Employee newEmployee = new Employee();
-                newEmployee.setMaNv(maNv);
-                newEmployee.setHoTen(hoTen);
-                newEmployee.setChucVu(chucVu);
-                newEmployee.setNgaySinh(edtNgaySinh.getText().toString());
-                newEmployee.setGioiTinh(spinnerGioiTinh.getSelectedItem().toString());
-                newEmployee.setSoDt(edtSoDt.getText().toString());
-                newEmployee.setEmail(edtEmail.getText().toString());
-                newEmployee.setIdPhongBan(idPhongBan);
-                newEmployee.setNgayVaoLam(edtNgayVaoLam.getText().toString());
-                newEmployee.setHeSoLuong(heSoLuong);
-                newEmployee.setTrangThai(trangThai);
-                newEmployee.setAvatar(currentAvatarUri);
-
-                if (employeeDAO.insertEmployee(newEmployee)) {
-                    loadEmployees();
-                    dialog.dismiss();
-                    Toast.makeText(this, "Đã thêm", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "Mã trùng!", Toast.LENGTH_SHORT).show();
-                }
+                insertEmployee(dialog, input);
             }
         });
+    }
+
+    private EmployeeInput getEmployeeInput(EditText edtMaNv, EditText edtHoTen, EditText edtNgaySinh,
+                                           EditText edtSoDt, EditText edtEmail, EditText edtChucVu,
+                                           EditText edtNgayVaoLam, EditText edtHeSoLuong,
+                                           Spinner spinnerGioiTinh, Spinner spinnerPhongBan,
+                                           Spinner spinnerTrangThai, List<Department> departmentList) {
+        EmployeeInput input = new EmployeeInput();
+        input.maNv = edtMaNv.getText().toString().trim();
+        input.hoTen = edtHoTen.getText().toString().trim();
+        input.ngaySinh = edtNgaySinh.getText().toString().trim();
+        input.soDt = edtSoDt.getText().toString().trim();
+        input.email = edtEmail.getText().toString().trim();
+        input.chucVu = edtChucVu.getText().toString().trim();
+        input.ngayVaoLam = edtNgayVaoLam.getText().toString().trim();
+        input.heSoLuong = parseHeSoLuong(edtHeSoLuong.getText().toString().trim());
+        input.gioiTinh = spinnerGioiTinh.getSelectedItem().toString();
+        input.idPhongBan = departmentList.get(spinnerPhongBan.getSelectedItemPosition()).getIdPhongBan();
+        input.trangThai = spinnerTrangThai.getSelectedItemPosition() == 0 ? 1 : 0;
+        input.avatar = currentAvatarUri;
+        return input;
+    }
+
+    private boolean validateEmployeeInput(EmployeeInput input,
+                                          EditText edtMaNv,
+                                          EditText edtHoTen,
+                                          EditText edtChucVu) {
+        if (TextUtils.isEmpty(input.maNv)) {
+            edtMaNv.setError("Cần mã NV");
+            return false;
+        }
+
+        if (TextUtils.isEmpty(input.hoTen)) {
+            edtHoTen.setError("Cần họ tên");
+            return false;
+        }
+
+        if (TextUtils.isEmpty(input.chucVu)) {
+            edtChucVu.setError("Cần chức vụ");
+            return false;
+        }
+
+        return true;
+    }
+
+    private double parseHeSoLuong(String heSoLuongStr) {
+        try {
+            return Double.parseDouble(heSoLuongStr);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private void updateEmployee(AlertDialog dialog, Employee employee, EmployeeInput input) {
+        employee.setHoTen(input.hoTen);
+        employee.setChucVu(input.chucVu);
+        employee.setNgaySinh(input.ngaySinh);
+        employee.setGioiTinh(input.gioiTinh);
+        employee.setSoDt(input.soDt);
+        employee.setEmail(input.email);
+        employee.setIdPhongBan(input.idPhongBan);
+        employee.setNgayVaoLam(input.ngayVaoLam);
+        employee.setHeSoLuong(input.heSoLuong);
+        employee.setTrangThai(input.trangThai);
+        employee.setAvatar(input.avatar);
+
+        if (employeeDAO.updateEmployee(employee)) {
+            loadEmployees();
+            dialog.dismiss();
+            Toast.makeText(this, "Đã cập nhật", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void insertEmployee(AlertDialog dialog, EmployeeInput input) {
+        Employee newEmployee = new Employee();
+        newEmployee.setMaNv(input.maNv);
+        newEmployee.setHoTen(input.hoTen);
+        newEmployee.setChucVu(input.chucVu);
+        newEmployee.setNgaySinh(input.ngaySinh);
+        newEmployee.setGioiTinh(input.gioiTinh);
+        newEmployee.setSoDt(input.soDt);
+        newEmployee.setEmail(input.email);
+        newEmployee.setIdPhongBan(input.idPhongBan);
+        newEmployee.setNgayVaoLam(input.ngayVaoLam);
+        newEmployee.setHeSoLuong(input.heSoLuong);
+        newEmployee.setTrangThai(input.trangThai);
+        newEmployee.setAvatar(input.avatar);
+
+        if (employeeDAO.insertEmployee(newEmployee)) {
+            loadEmployees();
+            dialog.dismiss();
+            Toast.makeText(this, "Đã thêm", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Mã trùng!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private static class EmployeeInput {
+        String maNv;
+        String hoTen;
+        String ngaySinh;
+        String gioiTinh;
+        String soDt;
+        String email;
+        String chucVu;
+        String ngayVaoLam;
+        double heSoLuong;
+        int idPhongBan;
+        int trangThai;
+        String avatar;
     }
 
     private void setSpinnerSelection(Spinner spinner, String value) {

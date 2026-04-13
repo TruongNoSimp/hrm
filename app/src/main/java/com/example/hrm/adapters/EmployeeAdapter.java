@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.hrm.listeners.OnItemActionListener;
 
 import com.example.hrm.R;
 import com.example.hrm.models.Employee;
@@ -18,15 +19,10 @@ import java.util.List;
 public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.EmployeeViewHolder> {
 
     private final List<Employee> employeeList;
-    private final OnEmployeeActionListener listener;
+    private OnItemActionListener<Employee> listener;
 
-    public interface OnEmployeeActionListener {
-        void onEdit(Employee employee);
-        void onDelete(Employee employee);
-        void onItemClick(Employee employee);
-    }
 
-    public EmployeeAdapter(List<Employee> employeeList, OnEmployeeActionListener listener) {
+    public EmployeeAdapter(List<Employee> employeeList, OnItemActionListener<Employee> listener) {
         this.employeeList = employeeList;
         this.listener = listener;
     }

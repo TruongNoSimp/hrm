@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hrm.R;
 import com.example.hrm.adapters.DepartmentAdapter;
 import com.example.hrm.dao.DepartmentDAO;
+import com.example.hrm.listeners.OnItemActionListener;
 import com.example.hrm.models.Department;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -60,7 +61,7 @@ public class DepartmentActivity extends AppCompatActivity {
 
         recyclerViewDepartment.setLayoutManager(new LinearLayoutManager(this));
 
-        departmentAdapter = new DepartmentAdapter(departmentList, new DepartmentAdapter.OnDepartmentActionListener() {
+        departmentAdapter = new DepartmentAdapter(departmentList, new OnItemActionListener<Department>() {
             @Override
             public void onEdit(Department department) {
                 showDepartmentDialog(department, true);
@@ -73,11 +74,7 @@ public class DepartmentActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(Department department) {
-                Toast.makeText(
-                        DepartmentActivity.this,
-                        "Xem nhân viên phòng: " + department.getTenPhong(),
-                        Toast.LENGTH_SHORT
-                ).show();
+                // chưa dùng thì để trống
             }
         });
 
@@ -89,9 +86,7 @@ public class DepartmentActivity extends AppCompatActivity {
     private void loadDepartments() {
         departmentList.clear();
         originalList.clear();
-
         List<Department> data = departmentDAO.getAllDepartments();
-
         departmentList.addAll(data);
         originalList.addAll(data);
 
@@ -132,74 +127,108 @@ public class DepartmentActivity extends AppCompatActivity {
                 }
             }
         }
-
         departmentAdapter.notifyDataSetChanged();
     }
 
     private void showDepartmentDialog(Department department, boolean isEdit) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_department, null);
-        builder.setView(view);
+        AlertDialog dialog = createDepartmentDialog(view);
 
         EditText edtMaPb = view.findViewById(R.id.edtMaPb);
         EditText edtTenPhong = view.findViewById(R.id.edtTenPhong);
         EditText edtMoTa = view.findViewById(R.id.edtMoTa);
         Button btnSave = view.findViewById(R.id.btnSaveDepartment);
         Button btnClose = view.findViewById(R.id.btnCloseDialog);
+// gọi hàm về
+        bindDepartmentData(department, isEdit, edtMaPb, edtTenPhong, edtMoTa);
+        setupCloseButton(dialog, btnClose);
+        setupSaveButton(dialog, department, isEdit, edtMaPb, edtTenPhong, edtMoTa, btnSave);
+    }
 
+    private AlertDialog createDepartmentDialog(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(view);
         AlertDialog dialog = builder.create();
         dialog.show();
+        return dialog;
+    }
 
+    private void bindDepartmentData(Department department, boolean isEdit,
+                                    EditText edtMaPb, EditText edtTenPhong, EditText edtMoTa) {
         if (isEdit && department != null) {
             edtMaPb.setText(department.getMaPb());
             edtTenPhong.setText(department.getTenPhong());
             edtMoTa.setText(department.getMoTa());
             edtMaPb.setEnabled(false);
         }
+    }
 
+    private void setupCloseButton(AlertDialog dialog, Button btnClose) {
         btnClose.setOnClickListener(v -> dialog.dismiss());
+    }
 
+    private void setupSaveButton(AlertDialog dialog, Department department, boolean isEdit,
+                                 EditText edtMaPb, EditText edtTenPhong, EditText edtMoTa,
+                                 Button btnSave) {
         btnSave.setOnClickListener(v -> {
             String maPb = edtMaPb.getText().toString().trim();
             String tenPhong = edtTenPhong.getText().toString().trim();
             String moTa = edtMoTa.getText().toString().trim();
 
-            if (TextUtils.isEmpty(maPb)) {
-                edtMaPb.setError("Không được để trống mã phòng ban");
-                return;
-            }
-
-            if (TextUtils.isEmpty(tenPhong)) {
-                edtTenPhong.setError("Không được để trống tên phòng");
+            if (!validateDepartmentInput(maPb, tenPhong, edtMaPb, edtTenPhong)) {
                 return;
             }
 
             if (isEdit && department != null) {
-                department.setTenPhong(tenPhong);
-                department.setMoTa(moTa);
-
-                boolean result = departmentDAO.updateDepartment(department);
-                if (result) {
-                    Toast.makeText(this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
-                    loadDepartments();
-                    dialog.dismiss();
-                }
+                updateDepartment(dialog, department, tenPhong, moTa);
             } else {
-                Department newDepartment = new Department();
-                newDepartment.setMaPb(maPb);
-                newDepartment.setTenPhong(tenPhong);
-                newDepartment.setMoTa(moTa);
-
-                boolean result = departmentDAO.insertDepartment(newDepartment);
-                if (result) {
-                    Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
-                    loadDepartments();
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(this, "Mã phòng ban đã tồn tại", Toast.LENGTH_SHORT).show();
-                }
+                insertDepartment(dialog, maPb, tenPhong, moTa);
             }
         });
+    }
+
+    private boolean validateDepartmentInput(String maPb, String tenPhong,
+                                            EditText edtMaPb, EditText edtTenPhong) {
+        if (TextUtils.isEmpty(maPb)) {
+            edtMaPb.setError("Không được để trống mã phòng ban");
+            return false;
+        }
+
+        if (TextUtils.isEmpty(tenPhong)) {
+            edtTenPhong.setError("Không được để trống tên phòng");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void updateDepartment(AlertDialog dialog, Department department,
+                                  String tenPhong, String moTa) {
+        department.setTenPhong(tenPhong);
+        department.setMoTa(moTa);
+
+        boolean result = departmentDAO.updateDepartment(department);
+        if (result) {
+            Toast.makeText(this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+            loadDepartments();
+            dialog.dismiss();
+        }
+    }
+
+    private void insertDepartment(AlertDialog dialog, String maPb, String tenPhong, String moTa) {
+        Department newDepartment = new Department();
+        newDepartment.setMaPb(maPb);
+        newDepartment.setTenPhong(tenPhong);
+        newDepartment.setMoTa(moTa);
+
+        boolean result = departmentDAO.insertDepartment(newDepartment);
+        if (result) {
+            Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
+            loadDepartments();
+            dialog.dismiss();
+        } else {
+            Toast.makeText(this, "Mã phòng ban đã tồn tại", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void confirmDeleteDepartment(Department department) {

@@ -27,7 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import com.example.hrm.listeners.OnItemActionListener;
 public class DisciplineActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewKyLuat;
@@ -71,7 +71,7 @@ public class DisciplineActivity extends AppCompatActivity {
 
         recyclerViewKyLuat.setLayoutManager(new LinearLayoutManager(this));
 
-        disciplineAdapter = new DisciplineAdapter(disciplineList, new DisciplineAdapter.OnKyLuatActionListener() {
+        disciplineAdapter = new DisciplineAdapter(disciplineList, new OnItemActionListener<Discipline>() {
             @Override
             public void onEdit(Discipline discipline) {
                 showKyLuatDialog(discipline, true);
@@ -80,6 +80,11 @@ public class DisciplineActivity extends AppCompatActivity {
             @Override
             public void onDelete(Discipline discipline) {
                 confirmDeleteKyLuat(discipline);
+            }
+
+            @Override
+            public void onItemClick(Discipline discipline) {
+                // chưa dùng thì để trống
             }
         });
 
@@ -143,9 +148,8 @@ public class DisciplineActivity extends AppCompatActivity {
     }
 
     private void showKyLuatDialog(Discipline discipline, boolean isEdit) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_discipline, null);
-        builder.setView(view);
+        AlertDialog dialog = createKyLuatDialog(view);
 
         Spinner spNhanVien = view.findViewById(R.id.spNhanVien);
         EditText edtNgayQuyetDinh = view.findViewById(R.id.edtNgayQuyetDinh);
@@ -155,14 +159,28 @@ public class DisciplineActivity extends AppCompatActivity {
         Button btnSave = view.findViewById(R.id.btnSaveKyLuat);
         Button btnClose = view.findViewById(R.id.btnCloseDialog);
 
+        employeeList = getEmployeeList();
+        setupEmployeeSpinner(spNhanVien, employeeList);
+        bindKyLuatData(discipline, isEdit, spNhanVien, edtNgayQuyetDinh, edtHinhThuc, edtSoTienPhat, edtLyDo);
+        setupCloseButton(dialog, btnClose);
+        setupSaveKyLuatButton(dialog, discipline, isEdit, spNhanVien,
+                edtNgayQuyetDinh, edtHinhThuc, edtSoTienPhat, edtLyDo, btnSave);
+    }
+
+    private AlertDialog createKyLuatDialog(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(view);
         AlertDialog dialog = builder.create();
         dialog.show();
+        return dialog;
+    }
 
-        employeeList = employeeDAO.getAllEmployees();
-        if (employeeList == null) {
-            employeeList = new ArrayList<>();
-        }
+    private List<Employee> getEmployeeList() {
+        List<Employee> list = employeeDAO.getAllEmployees();
+        return list != null ? list : new ArrayList<>();
+    }
 
+    private void setupEmployeeSpinner(Spinner spNhanVien, List<Employee> employeeList) {
         List<String> employeeNames = new ArrayList<>();
         for (Employee employee : employeeList) {
             employeeNames.add(employee.getMaNv() + " - " + employee.getHoTen());
@@ -175,25 +193,45 @@ public class DisciplineActivity extends AppCompatActivity {
         );
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spNhanVien.setAdapter(spinnerAdapter);
+    }
 
+    private void bindKyLuatData(Discipline discipline, boolean isEdit,
+                                Spinner spNhanVien,
+                                EditText edtNgayQuyetDinh,
+                                EditText edtHinhThuc,
+                                EditText edtSoTienPhat,
+                                EditText edtLyDo) {
         if (isEdit && discipline != null) {
             edtNgayQuyetDinh.setText(discipline.getNgayQuyetDinh());
             edtHinhThuc.setText(discipline.getHinhThuc());
             edtSoTienPhat.setText(String.valueOf(discipline.getSoTienPhat()));
             edtLyDo.setText(discipline.getLyDo());
 
-            int selectedPosition = 0;
-            for (int i = 0; i < employeeList.size(); i++) {
-                if (employeeList.get(i).getIdNv() == discipline.getIdNhanVien()) {
-                    selectedPosition = i;
-                    break;
-                }
-            }
+            int selectedPosition = findSelectedEmployeePosition(discipline.getIdNhanVien());
             spNhanVien.setSelection(selectedPosition);
         }
+    }
 
+    private int findSelectedEmployeePosition(int idNhanVien) {
+        for (int i = 0; i < employeeList.size(); i++) {
+            if (employeeList.get(i).getIdNv() == idNhanVien) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private void setupCloseButton(AlertDialog dialog, Button btnClose) {
         btnClose.setOnClickListener(v -> dialog.dismiss());
+    }
 
+    private void setupSaveKyLuatButton(AlertDialog dialog, Discipline discipline, boolean isEdit,
+                                       Spinner spNhanVien,
+                                       EditText edtNgayQuyetDinh,
+                                       EditText edtHinhThuc,
+                                       EditText edtSoTienPhat,
+                                       EditText edtLyDo,
+                                       Button btnSave) {
         btnSave.setOnClickListener(v -> {
             if (employeeList.isEmpty()) {
                 Toast.makeText(this, "Chưa có nhân viên để chọn", Toast.LENGTH_SHORT).show();
@@ -205,74 +243,113 @@ public class DisciplineActivity extends AppCompatActivity {
             String soTienPhatStr = edtSoTienPhat.getText().toString().trim();
             String lyDo = edtLyDo.getText().toString().trim();
 
-            if (TextUtils.isEmpty(ngayQuyetDinh)) {
-                edtNgayQuyetDinh.setError("Không được để trống ngày quyết định");
-                return;
-            }
+            Double soTienPhat = validateKyLuatInput(
+                    ngayQuyetDinh, hinhThuc, soTienPhatStr, lyDo,
+                    edtNgayQuyetDinh, edtHinhThuc, edtSoTienPhat, edtLyDo
+            );
 
-            if (TextUtils.isEmpty(hinhThuc)) {
-                edtHinhThuc.setError("Không được để trống hình thức kỷ luật");
-                return;
-            }
-
-            if (TextUtils.isEmpty(soTienPhatStr)) {
-                edtSoTienPhat.setError("Không được để trống số tiền phạt");
-                return;
-            }
-
-            if (TextUtils.isEmpty(lyDo)) {
-                edtLyDo.setError("Không được để trống lý do");
-                return;
-            }
-
-            double soTienPhat;
-            try {
-                soTienPhat = Double.parseDouble(soTienPhatStr);
-            } catch (Exception e) {
-                edtSoTienPhat.setError("Số tiền phạt không hợp lệ");
-                return;
-            }
-
-            if (soTienPhat < 0) {
-                edtSoTienPhat.setError("Số tiền phạt phải >= 0");
+            if (soTienPhat == null) {
                 return;
             }
 
             Employee selectedEmployee = employeeList.get(spNhanVien.getSelectedItemPosition());
 
             if (isEdit && discipline != null) {
-                discipline.setIdNhanVien(selectedEmployee.getIdNv());
-                discipline.setNgayQuyetDinh(ngayQuyetDinh);
-                discipline.setHinhThuc(hinhThuc);
-                discipline.setSoTienPhat(soTienPhat);
-                discipline.setLyDo(lyDo);
-
-                int result = disciplineDAO.updateKyLuat(discipline);
-                if (result > 0) {
-                    Toast.makeText(this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
-                    loadData();
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
-                }
+                updateKyLuat(dialog, discipline, selectedEmployee, ngayQuyetDinh, hinhThuc, soTienPhat, lyDo);
             } else {
-                Discipline newDiscipline = new Discipline();
-                newDiscipline.setIdNhanVien(selectedEmployee.getIdNv());
-                newDiscipline.setNgayQuyetDinh(ngayQuyetDinh);
-                newDiscipline.setHinhThuc(hinhThuc);
-                newDiscipline.setSoTienPhat(soTienPhat);
-                newDiscipline.setLyDo(lyDo);
-
-                long result = disciplineDAO.insertKyLuat(newDiscipline);
-                if (result > 0) {
-                    Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
-                    loadData();
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(this, "Thêm thất bại", Toast.LENGTH_SHORT).show();
-                }
+                insertKyLuat(dialog, selectedEmployee, ngayQuyetDinh, hinhThuc, soTienPhat, lyDo);
             }
         });
+    }
+
+    private Double validateKyLuatInput(String ngayQuyetDinh,
+                                       String hinhThuc,
+                                       String soTienPhatStr,
+                                       String lyDo,
+                                       EditText edtNgayQuyetDinh,
+                                       EditText edtHinhThuc,
+                                       EditText edtSoTienPhat,
+                                       EditText edtLyDo) {
+        if (TextUtils.isEmpty(ngayQuyetDinh)) {
+            edtNgayQuyetDinh.setError("Không được để trống ngày quyết định");
+            return null;
+        }
+
+        if (TextUtils.isEmpty(hinhThuc)) {
+            edtHinhThuc.setError("Không được để trống hình thức kỷ luật");
+            return null;
+        }
+
+        if (TextUtils.isEmpty(soTienPhatStr)) {
+            edtSoTienPhat.setError("Không được để trống số tiền phạt");
+            return null;
+        }
+
+        if (TextUtils.isEmpty(lyDo)) {
+            edtLyDo.setError("Không được để trống lý do");
+            return null;
+        }
+
+        double soTienPhat;
+        try {
+            soTienPhat = Double.parseDouble(soTienPhatStr);
+        } catch (Exception e) {
+            edtSoTienPhat.setError("Số tiền phạt không hợp lệ");
+            return null;
+        }
+
+        if (soTienPhat < 0) {
+            edtSoTienPhat.setError("Số tiền phạt phải >= 0");
+            return null;
+        }
+
+        return soTienPhat;
+    }
+
+    private void updateKyLuat(AlertDialog dialog,
+                              Discipline discipline,
+                              Employee selectedEmployee,
+                              String ngayQuyetDinh,
+                              String hinhThuc,
+                              double soTienPhat,
+                              String lyDo) {
+        discipline.setIdNhanVien(selectedEmployee.getIdNv());
+        discipline.setNgayQuyetDinh(ngayQuyetDinh);
+        discipline.setHinhThuc(hinhThuc);
+        discipline.setSoTienPhat(soTienPhat);
+        discipline.setLyDo(lyDo);
+
+        int result = disciplineDAO.updateKyLuat(discipline);
+        if (result > 0) {
+            Toast.makeText(this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+            loadData();
+            dialog.dismiss();
+        } else {
+            Toast.makeText(this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void insertKyLuat(AlertDialog dialog,
+                              Employee selectedEmployee,
+                              String ngayQuyetDinh,
+                              String hinhThuc,
+                              double soTienPhat,
+                              String lyDo) {
+        Discipline newDiscipline = new Discipline();
+        newDiscipline.setIdNhanVien(selectedEmployee.getIdNv());
+        newDiscipline.setNgayQuyetDinh(ngayQuyetDinh);
+        newDiscipline.setHinhThuc(hinhThuc);
+        newDiscipline.setSoTienPhat(soTienPhat);
+        newDiscipline.setLyDo(lyDo);
+
+        long result = disciplineDAO.insertKyLuat(newDiscipline);
+        if (result > 0) {
+            Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
+            loadData();
+            dialog.dismiss();
+        } else {
+            Toast.makeText(this, "Thêm thất bại", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void confirmDeleteKyLuat(Discipline discipline) {

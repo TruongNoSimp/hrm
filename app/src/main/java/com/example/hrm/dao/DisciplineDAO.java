@@ -135,10 +135,8 @@ public class DisciplineDAO {
 
                 list.add(discipline);
             } while (cursor.moveToNext());
-
             cursor.close();
         }
-
         close();
         return list;
     }

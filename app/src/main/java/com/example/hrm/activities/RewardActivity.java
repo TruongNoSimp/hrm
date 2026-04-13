@@ -24,7 +24,7 @@ import com.example.hrm.dao.RewardDAO;
 import com.example.hrm.models.Employee;
 import com.example.hrm.models.Reward;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
+import com.example.hrm.listeners.OnItemActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +71,7 @@ public class RewardActivity extends AppCompatActivity {
 
         recyclerViewKhenThuong.setLayoutManager(new LinearLayoutManager(this));
 
-        rewardAdapter = new RewardAdapter(rewardList, new RewardAdapter.OnKhenThuongActionListener() {
+        rewardAdapter = new RewardAdapter(rewardList, new OnItemActionListener<Reward>() {
             @Override
             public void onEdit(Reward reward) {
                 showKhenThuongDialog(reward, true);
@@ -80,6 +80,9 @@ public class RewardActivity extends AppCompatActivity {
             @Override
             public void onDelete(Reward reward) {
                 confirmDeleteKhenThuong(reward);
+            }
+            @Override
+            public void onItemClick(Reward reward) {
             }
         });
 
@@ -144,9 +147,8 @@ public class RewardActivity extends AppCompatActivity {
     }
 
     private void showKhenThuongDialog(Reward reward, boolean isEdit) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_reward, null);
-        builder.setView(view);
+        AlertDialog dialog = createKhenThuongDialog(view);
 
         Spinner spNhanVien = view.findViewById(R.id.spNhanVien);
         EditText edtNgayQuyetDinh = view.findViewById(R.id.edtNgayQuyetDinh);
@@ -156,14 +158,28 @@ public class RewardActivity extends AppCompatActivity {
         Button btnSave = view.findViewById(R.id.btnSaveKhenThuong);
         Button btnClose = view.findViewById(R.id.btnCloseDialog);
 
+        employeeList = getEmployeeList();
+        setupEmployeeSpinner(spNhanVien, employeeList);
+        bindKhenThuongData(reward, isEdit, spNhanVien, edtNgayQuyetDinh, edtHinhThuc, edtSoTienThuong, edtLyDo);
+        setupCloseButton(dialog, btnClose);
+        setupSaveKhenThuongButton(dialog, reward, isEdit, spNhanVien,
+                edtNgayQuyetDinh, edtHinhThuc, edtSoTienThuong, edtLyDo, btnSave);
+    }
+
+    private AlertDialog createKhenThuongDialog(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(view);
         AlertDialog dialog = builder.create();
         dialog.show();
+        return dialog;
+    }
 
-        employeeList = employeeDAO.getAllEmployees();
-        if (employeeList == null) {
-            employeeList = new ArrayList<>();
-        }
+    private List<Employee> getEmployeeList() {
+        List<Employee> list = employeeDAO.getAllEmployees();
+        return list != null ? list : new ArrayList<>();
+    }
 
+    private void setupEmployeeSpinner(Spinner spNhanVien, List<Employee> employeeList) {
         List<String> employeeNames = new ArrayList<>();
         for (Employee employee : employeeList) {
             employeeNames.add(employee.getMaNv() + " - " + employee.getHoTen());
@@ -176,25 +192,45 @@ public class RewardActivity extends AppCompatActivity {
         );
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spNhanVien.setAdapter(spinnerAdapter);
+    }
 
+    private void bindKhenThuongData(Reward reward, boolean isEdit,
+                                    Spinner spNhanVien,
+                                    EditText edtNgayQuyetDinh,
+                                    EditText edtHinhThuc,
+                                    EditText edtSoTienThuong,
+                                    EditText edtLyDo) {
         if (isEdit && reward != null) {
             edtNgayQuyetDinh.setText(reward.getNgayQuyetDinh());
             edtHinhThuc.setText(reward.getHinhThuc());
             edtSoTienThuong.setText(String.valueOf(reward.getSoTienThuong()));
             edtLyDo.setText(reward.getLyDo());
 
-            int selectedPosition = 0;
-            for (int i = 0; i < employeeList.size(); i++) {
-                if (employeeList.get(i).getIdNv() == reward.getIdNhanVien()) {
-                    selectedPosition = i;
-                    break;
-                }
-            }
+            int selectedPosition = findSelectedEmployeePosition(reward.getIdNhanVien());
             spNhanVien.setSelection(selectedPosition);
         }
+    }
 
+    private int findSelectedEmployeePosition(int idNhanVien) {
+        for (int i = 0; i < employeeList.size(); i++) {
+            if (employeeList.get(i).getIdNv() == idNhanVien) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private void setupCloseButton(AlertDialog dialog, Button btnClose) {
         btnClose.setOnClickListener(v -> dialog.dismiss());
+    }
 
+    private void setupSaveKhenThuongButton(AlertDialog dialog, Reward reward, boolean isEdit,
+                                           Spinner spNhanVien,
+                                           EditText edtNgayQuyetDinh,
+                                           EditText edtHinhThuc,
+                                           EditText edtSoTienThuong,
+                                           EditText edtLyDo,
+                                           Button btnSave) {
         btnSave.setOnClickListener(v -> {
             if (employeeList.isEmpty()) {
                 Toast.makeText(this, "Chưa có nhân viên để chọn", Toast.LENGTH_SHORT).show();
@@ -206,74 +242,113 @@ public class RewardActivity extends AppCompatActivity {
             String soTienThuongStr = edtSoTienThuong.getText().toString().trim();
             String lyDo = edtLyDo.getText().toString().trim();
 
-            if (TextUtils.isEmpty(ngayQuyetDinh)) {
-                edtNgayQuyetDinh.setError("Không được để trống ngày quyết định");
-                return;
-            }
+            Double soTienThuong = validateKhenThuongInput(
+                    ngayQuyetDinh, hinhThuc, soTienThuongStr, lyDo,
+                    edtNgayQuyetDinh, edtHinhThuc, edtSoTienThuong, edtLyDo
+            );
 
-            if (TextUtils.isEmpty(hinhThuc)) {
-                edtHinhThuc.setError("Không được để trống hình thức khen thưởng");
-                return;
-            }
-
-            if (TextUtils.isEmpty(soTienThuongStr)) {
-                edtSoTienThuong.setError("Không được để trống số tiền thưởng");
-                return;
-            }
-
-            if (TextUtils.isEmpty(lyDo)) {
-                edtLyDo.setError("Không được để trống lý do");
-                return;
-            }
-
-            double soTienThuong;
-            try {
-                soTienThuong = Double.parseDouble(soTienThuongStr);
-            } catch (Exception e) {
-                edtSoTienThuong.setError("Số tiền thưởng không hợp lệ");
-                return;
-            }
-
-            if (soTienThuong < 0) {
-                edtSoTienThuong.setError("Số tiền thưởng phải >= 0");
+            if (soTienThuong == null) {
                 return;
             }
 
             Employee selectedEmployee = employeeList.get(spNhanVien.getSelectedItemPosition());
 
             if (isEdit && reward != null) {
-                reward.setIdNhanVien(selectedEmployee.getIdNv());
-                reward.setNgayQuyetDinh(ngayQuyetDinh);
-                reward.setHinhThuc(hinhThuc);
-                reward.setSoTienThuong(soTienThuong);
-                reward.setLyDo(lyDo);
-
-                int result = rewardDAO.updateKhenThuong(reward);
-                if (result > 0) {
-                    Toast.makeText(this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
-                    loadData();
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
-                }
+                updateKhenThuong(dialog, reward, selectedEmployee, ngayQuyetDinh, hinhThuc, soTienThuong, lyDo);
             } else {
-                Reward newReward = new Reward();
-                newReward.setIdNhanVien(selectedEmployee.getIdNv());
-                newReward.setNgayQuyetDinh(ngayQuyetDinh);
-                newReward.setHinhThuc(hinhThuc);
-                newReward.setSoTienThuong(soTienThuong);
-                newReward.setLyDo(lyDo);
-
-                long result = rewardDAO.insertKhenThuong(newReward);
-                if (result > 0) {
-                    Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
-                    loadData();
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(this, "Thêm thất bại", Toast.LENGTH_SHORT).show();
-                }
+                insertKhenThuong(dialog, selectedEmployee, ngayQuyetDinh, hinhThuc, soTienThuong, lyDo);
             }
         });
+    }
+
+    private Double validateKhenThuongInput(String ngayQuyetDinh,
+                                           String hinhThuc,
+                                           String soTienThuongStr,
+                                           String lyDo,
+                                           EditText edtNgayQuyetDinh,
+                                           EditText edtHinhThuc,
+                                           EditText edtSoTienThuong,
+                                           EditText edtLyDo) {
+        if (TextUtils.isEmpty(ngayQuyetDinh)) {
+            edtNgayQuyetDinh.setError("Không được để trống ngày quyết định");
+            return null;
+        }
+
+        if (TextUtils.isEmpty(hinhThuc)) {
+            edtHinhThuc.setError("Không được để trống hình thức khen thưởng");
+            return null;
+        }
+
+        if (TextUtils.isEmpty(soTienThuongStr)) {
+            edtSoTienThuong.setError("Không được để trống số tiền thưởng");
+            return null;
+        }
+
+        if (TextUtils.isEmpty(lyDo)) {
+            edtLyDo.setError("Không được để trống lý do");
+            return null;
+        }
+
+        double soTienThuong;
+        try {
+            soTienThuong = Double.parseDouble(soTienThuongStr);
+        } catch (Exception e) {
+            edtSoTienThuong.setError("Số tiền thưởng không hợp lệ");
+            return null;
+        }
+
+        if (soTienThuong < 0) {
+            edtSoTienThuong.setError("Số tiền thưởng phải >= 0");
+            return null;
+        }
+
+        return soTienThuong;
+    }
+
+    private void updateKhenThuong(AlertDialog dialog,
+                                  Reward reward,
+                                  Employee selectedEmployee,
+                                  String ngayQuyetDinh,
+                                  String hinhThuc,
+                                  double soTienThuong,
+                                  String lyDo) {
+        reward.setIdNhanVien(selectedEmployee.getIdNv());
+        reward.setNgayQuyetDinh(ngayQuyetDinh);
+        reward.setHinhThuc(hinhThuc);
+        reward.setSoTienThuong(soTienThuong);
+        reward.setLyDo(lyDo);
+
+        int result = rewardDAO.updateKhenThuong(reward);
+        if (result > 0) {
+            Toast.makeText(this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+            loadData();
+            dialog.dismiss();
+        } else {
+            Toast.makeText(this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void insertKhenThuong(AlertDialog dialog,
+                                  Employee selectedEmployee,
+                                  String ngayQuyetDinh,
+                                  String hinhThuc,
+                                  double soTienThuong,
+                                  String lyDo) {
+        Reward newReward = new Reward();
+        newReward.setIdNhanVien(selectedEmployee.getIdNv());
+        newReward.setNgayQuyetDinh(ngayQuyetDinh);
+        newReward.setHinhThuc(hinhThuc);
+        newReward.setSoTienThuong(soTienThuong);
+        newReward.setLyDo(lyDo);
+
+        long result = rewardDAO.insertKhenThuong(newReward);
+        if (result > 0) {
+            Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
+            loadData();
+            dialog.dismiss();
+        } else {
+            Toast.makeText(this, "Thêm thất bại", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void confirmDeleteKhenThuong(Reward reward) {

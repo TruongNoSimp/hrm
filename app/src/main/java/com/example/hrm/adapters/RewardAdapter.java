@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hrm.R;
+import com.example.hrm.listeners.OnItemActionListener;
 import com.example.hrm.models.Reward;
 
 import java.text.DecimalFormat;
@@ -18,10 +19,10 @@ import java.util.List;
 public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.KhenThuongViewHolder> {
 
     private List<Reward> rewardList;
-    private OnKhenThuongActionListener listener;
+    private OnItemActionListener<Reward> listener;
     private final DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
-    public RewardAdapter(List<Reward> rewardList, OnKhenThuongActionListener listener) {
+    public RewardAdapter(List<Reward> rewardList, OnItemActionListener<Reward> listener) {
         this.rewardList = rewardList;
         this.listener = listener;
     }
@@ -84,10 +85,5 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.KhenThuong
             imgEdit = itemView.findViewById(R.id.imgEdit);
             imgDelete = itemView.findViewById(R.id.imgDelete);
         }
-    }
-
-    public interface OnKhenThuongActionListener {
-        void onEdit(Reward reward);
-        void onDelete(Reward reward);
     }
 }

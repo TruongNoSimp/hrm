@@ -13,11 +13,11 @@ import com.example.hrm.R;
 import com.example.hrm.models.Department;
 
 import java.util.List;
-
+import com.example.hrm.listeners.OnItemActionListener;
 public class DepartmentAdapter extends RecyclerView.Adapter<DepartmentAdapter.DepartmentViewHolder> {
 
     private List<Department> departmentList;
-    private OnDepartmentActionListener listener;
+    private OnItemActionListener<Department> listener;
 
     public interface OnDepartmentActionListener {
         void onEdit(Department department);
@@ -25,7 +25,7 @@ public class DepartmentAdapter extends RecyclerView.Adapter<DepartmentAdapter.De
         void onItemClick(Department department);
     }
 
-    public DepartmentAdapter(List<Department> departmentList, OnDepartmentActionListener listener) {
+    public DepartmentAdapter(List<Department> departmentList, OnItemActionListener<Department> listener) {
         this.departmentList = departmentList;
         this.listener = listener;
     }

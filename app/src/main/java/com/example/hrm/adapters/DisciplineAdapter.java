@@ -14,14 +14,16 @@ import com.example.hrm.models.Discipline;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import com.example.hrm.listeners.OnItemActionListener;
+import com.example.hrm.models.Employee;
 
 public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.KyLuatViewHolder> {
 
     private List<Discipline> disciplineList;
-    private OnKyLuatActionListener listener;
+    private OnItemActionListener<Discipline> listener;
     private DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
-    public DisciplineAdapter(List<Discipline> disciplineList, OnKyLuatActionListener listener) {
+    public DisciplineAdapter(List<Discipline> disciplineList,OnItemActionListener<Discipline> listener) {
         this.disciplineList = disciplineList;
         this.listener = listener;
     }
