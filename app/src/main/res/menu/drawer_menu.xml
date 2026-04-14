@@ -23,9 +23,9 @@
             android:title="Chấm công" />
 
         <item
-            android:id="@+id/nav_leave"
-            android:icon="@android:drawable/ic_menu_edit"
-            android:title="Nghỉ phép" />
+            android:id="@+id/nav_salary"
+            android:icon="@android:drawable/ic_menu_info_details"
+            android:title="Quản lý lương" />
 
         <item
             android:id="@+id/nav_reward"

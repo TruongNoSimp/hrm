@@ -1,6 +1,7 @@
 package com.example.hrm.activities;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -26,8 +27,12 @@ import com.example.hrm.models.Discipline;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+
 import com.example.hrm.listeners.OnItemActionListener;
+
 public class DisciplineActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewKyLuat;
@@ -84,23 +89,19 @@ public class DisciplineActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(Discipline discipline) {
-                // chưa dùng thì để trống
             }
         });
 
         recyclerViewKyLuat.setAdapter(disciplineAdapter);
-
         fabAddKyLuat.setOnClickListener(v -> showKyLuatDialog(null, false));
     }
 
     private void loadData() {
         disciplineList.clear();
         originalList.clear();
-
         List<Discipline> data = disciplineDAO.getAllKyLuat();
         disciplineList.addAll(data);
         originalList.addAll(data);
-
         disciplineAdapter.notifyDataSetChanged();
     }
 
@@ -124,26 +125,26 @@ public class DisciplineActivity extends AppCompatActivity {
     private void setupToolbar() {
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbarKyLuat);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         toolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void filterKyLuat(String keyword) {
         disciplineList.clear();
-
         if (keyword.isEmpty()) {
             disciplineList.addAll(originalList);
         } else {
+            String search = keyword.toLowerCase();
             for (Discipline k : originalList) {
-                String tenNhanVien = k.getTenNhanVien() == null ? "" : k.getTenNhanVien().toLowerCase();
-                String maNhanVien = k.getMaNhanVien() == null ? "" : k.getMaNhanVien().toLowerCase();
-                String search = keyword.toLowerCase();
-
-                if (tenNhanVien.contains(search) || maNhanVien.contains(search)) {
+                String ten = k.getTenNhanVien() == null ? "" : k.getTenNhanVien().toLowerCase();
+                String ma = k.getMaNhanVien() == null ? "" : k.getMaNhanVien().toLowerCase();
+                if (ten.contains(search) || ma.contains(search)) {
                     disciplineList.add(k);
                 }
             }
         }
-
         disciplineAdapter.notifyDataSetChanged();
     }
 
@@ -159,12 +160,24 @@ public class DisciplineActivity extends AppCompatActivity {
         Button btnSave = view.findViewById(R.id.btnSaveKyLuat);
         Button btnClose = view.findViewById(R.id.btnCloseDialog);
 
+        setupDatePicker(edtNgayQuyetDinh);
+
         employeeList = getEmployeeList();
         setupEmployeeSpinner(spNhanVien, employeeList);
         bindKyLuatData(discipline, isEdit, spNhanVien, edtNgayQuyetDinh, edtHinhThuc, edtSoTienPhat, edtLyDo);
         setupCloseButton(dialog, btnClose);
-        setupSaveKyLuatButton(dialog, discipline, isEdit, spNhanVien,
-                edtNgayQuyetDinh, edtHinhThuc, edtSoTienPhat, edtLyDo, btnSave);
+        setupSaveKyLuatButton(dialog, discipline, isEdit, spNhanVien, edtNgayQuyetDinh, edtHinhThuc, edtSoTienPhat, edtLyDo, btnSave);
+    }
+
+    private void setupDatePicker(EditText edtNgayQuyetDinh) {
+        edtNgayQuyetDinh.setFocusable(false);
+        edtNgayQuyetDinh.setOnClickListener(v -> {
+            Calendar cal = Calendar.getInstance();
+            new DatePickerDialog(this, (view, year, month, day) -> {
+                String date = String.format(Locale.getDefault(), "%d-%02d-%02d", year, month + 1, day);
+                edtNgayQuyetDinh.setText(date);
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
+        });
     }
 
     private AlertDialog createKyLuatDialog(View view) {
@@ -176,49 +189,35 @@ public class DisciplineActivity extends AppCompatActivity {
     }
 
     private List<Employee> getEmployeeList() {
-        List<Employee> list = employeeDAO.getAllEmployees();
-        return list != null ? list : new ArrayList<>();
+        return employeeDAO.getAllEmployees();
     }
 
-    private void setupEmployeeSpinner(Spinner spNhanVien, List<Employee> employeeList) {
-        List<String> employeeNames = new ArrayList<>();
-        for (Employee employee : employeeList) {
-            employeeNames.add(employee.getMaNv() + " - " + employee.getHoTen());
+    private void setupEmployeeSpinner(Spinner spNhanVien, List<Employee> list) {
+        List<String> names = new ArrayList<>();
+        for (Employee e : list) {
+            names.add(e.getMaNv() + " - " + e.getHoTen());
         }
-
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                employeeNames
-        );
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spNhanVien.setAdapter(spinnerAdapter);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, names);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spNhanVien.setAdapter(adapter);
     }
 
-    private void bindKyLuatData(Discipline discipline, boolean isEdit,
-                                Spinner spNhanVien,
-                                EditText edtNgayQuyetDinh,
-                                EditText edtHinhThuc,
-                                EditText edtSoTienPhat,
-                                EditText edtLyDo) {
+    private void bindKyLuatData(Discipline discipline, boolean isEdit, Spinner spNhanVien,
+                                EditText edtNgayQuyetDinh, EditText edtHinhThuc,
+                                EditText edtSoTienPhat, EditText edtLyDo) {
         if (isEdit && discipline != null) {
             edtNgayQuyetDinh.setText(discipline.getNgayQuyetDinh());
             edtHinhThuc.setText(discipline.getHinhThuc());
             edtSoTienPhat.setText(String.valueOf(discipline.getSoTienPhat()));
             edtLyDo.setText(discipline.getLyDo());
 
-            int selectedPosition = findSelectedEmployeePosition(discipline.getIdNhanVien());
-            spNhanVien.setSelection(selectedPosition);
-        }
-    }
-
-    private int findSelectedEmployeePosition(int idNhanVien) {
-        for (int i = 0; i < employeeList.size(); i++) {
-            if (employeeList.get(i).getIdNv() == idNhanVien) {
-                return i;
+            for (int i = 0; i < employeeList.size(); i++) {
+                if (employeeList.get(i).getIdNv() == discipline.getIdNhanVien()) {
+                    spNhanVien.setSelection(i);
+                    break;
+                }
             }
         }
-        return 0;
     }
 
     private void setupCloseButton(AlertDialog dialog, Button btnClose) {
@@ -226,93 +225,70 @@ public class DisciplineActivity extends AppCompatActivity {
     }
 
     private void setupSaveKyLuatButton(AlertDialog dialog, Discipline discipline, boolean isEdit,
-                                       Spinner spNhanVien,
-                                       EditText edtNgayQuyetDinh,
-                                       EditText edtHinhThuc,
-                                       EditText edtSoTienPhat,
-                                       EditText edtLyDo,
-                                       Button btnSave) {
+                                       Spinner spNhanVien, EditText edtNgayQuyetDinh,
+                                       EditText edtHinhThuc, EditText edtSoTienPhat,
+                                       EditText edtLyDo, Button btnSave) {
         btnSave.setOnClickListener(v -> {
             if (employeeList.isEmpty()) {
-                Toast.makeText(this, "Chưa có nhân viên để chọn", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Vui lòng thêm nhân viên trước", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             String ngayQuyetDinh = edtNgayQuyetDinh.getText().toString().trim();
             String hinhThuc = edtHinhThuc.getText().toString().trim();
-            String soTienPhatStr = edtSoTienPhat.getText().toString().trim();
+            String soTienStr = edtSoTienPhat.getText().toString().trim();
             String lyDo = edtLyDo.getText().toString().trim();
 
-            Double soTienPhat = validateKyLuatInput(
-                    ngayQuyetDinh, hinhThuc, soTienPhatStr, lyDo,
-                    edtNgayQuyetDinh, edtHinhThuc, edtSoTienPhat, edtLyDo
-            );
+            Double soTienPhat = validateKyLuatInput(ngayQuyetDinh, hinhThuc, soTienStr, lyDo,
+                    edtNgayQuyetDinh, edtHinhThuc, edtSoTienPhat, edtLyDo);
 
-            if (soTienPhat == null) {
-                return;
-            }
+            if (soTienPhat == null) return;
 
             Employee selectedEmployee = employeeList.get(spNhanVien.getSelectedItemPosition());
 
             if (isEdit && discipline != null) {
-                updateKyLuat(dialog, discipline, selectedEmployee, ngayQuyetDinh, hinhThuc, soTienPhat, lyDo);
+                updateExistingKyLuat(dialog, discipline, selectedEmployee, ngayQuyetDinh, hinhThuc, soTienPhat, lyDo);
             } else {
-                insertKyLuat(dialog, selectedEmployee, ngayQuyetDinh, hinhThuc, soTienPhat, lyDo);
+                addNewKyLuat(dialog, selectedEmployee, ngayQuyetDinh, hinhThuc, soTienPhat, lyDo);
             }
         });
     }
 
-    private Double validateKyLuatInput(String ngayQuyetDinh,
-                                       String hinhThuc,
-                                       String soTienPhatStr,
-                                       String lyDo,
-                                       EditText edtNgayQuyetDinh,
-                                       EditText edtHinhThuc,
-                                       EditText edtSoTienPhat,
-                                       EditText edtLyDo) {
+    private Double validateKyLuatInput(String ngayQuyetDinh, String hinhThuc, String soTienStr, String lyDo,
+                                       EditText edtNgayQuyetDinh, EditText edtHinhThuc,
+                                       EditText edtSoTienPhat, EditText edtLyDo) {
         if (TextUtils.isEmpty(ngayQuyetDinh)) {
-            edtNgayQuyetDinh.setError("Không được để trống ngày quyết định");
+            edtNgayQuyetDinh.setError("Vui lòng nhập ngày");
             return null;
         }
-
         if (TextUtils.isEmpty(hinhThuc)) {
-            edtHinhThuc.setError("Không được để trống hình thức kỷ luật");
+            edtHinhThuc.setError("Vui lòng nhập hình thức");
             return null;
         }
-
-        if (TextUtils.isEmpty(soTienPhatStr)) {
-            edtSoTienPhat.setError("Không được để trống số tiền phạt");
+        if (TextUtils.isEmpty(soTienStr)) {
+            edtSoTienPhat.setError("Vui lòng nhập số tiền");
             return null;
         }
-
         if (TextUtils.isEmpty(lyDo)) {
-            edtLyDo.setError("Không được để trống lý do");
+            edtLyDo.setError("Vui lòng nhập lý do");
             return null;
         }
 
-        double soTienPhat;
         try {
-            soTienPhat = Double.parseDouble(soTienPhatStr);
-        } catch (Exception e) {
-            edtSoTienPhat.setError("Số tiền phạt không hợp lệ");
+            double soTien = Double.parseDouble(soTienStr);
+            if (soTien < 0) {
+                edtSoTienPhat.setError("Số tiền không được âm");
+                return null;
+            }
+            return soTien;
+        } catch (NumberFormatException e) {
+            edtSoTienPhat.setError("Số tiền không hợp lệ");
             return null;
         }
-
-        if (soTienPhat < 0) {
-            edtSoTienPhat.setError("Số tiền phạt phải >= 0");
-            return null;
-        }
-
-        return soTienPhat;
     }
 
-    private void updateKyLuat(AlertDialog dialog,
-                              Discipline discipline,
-                              Employee selectedEmployee,
-                              String ngayQuyetDinh,
-                              String hinhThuc,
-                              double soTienPhat,
-                              String lyDo) {
+    private void updateExistingKyLuat(AlertDialog dialog, Discipline discipline, Employee selectedEmployee,
+                                      String ngayQuyetDinh, String hinhThuc, double soTienPhat, String lyDo) {
         discipline.setIdNhanVien(selectedEmployee.getIdNv());
         discipline.setNgayQuyetDinh(ngayQuyetDinh);
         discipline.setHinhThuc(hinhThuc);
@@ -329,12 +305,8 @@ public class DisciplineActivity extends AppCompatActivity {
         }
     }
 
-    private void insertKyLuat(AlertDialog dialog,
-                              Employee selectedEmployee,
-                              String ngayQuyetDinh,
-                              String hinhThuc,
-                              double soTienPhat,
-                              String lyDo) {
+    private void addNewKyLuat(AlertDialog dialog, Employee selectedEmployee, String ngayQuyetDinh, String hinhThuc,
+                              double soTienPhat, String lyDo) {
         Discipline newDiscipline = new Discipline();
         newDiscipline.setIdNhanVien(selectedEmployee.getIdNv());
         newDiscipline.setNgayQuyetDinh(ngayQuyetDinh);
@@ -358,7 +330,6 @@ public class DisciplineActivity extends AppCompatActivity {
                 .setMessage("Bạn có chắc muốn xóa không?")
                 .setPositiveButton("Xóa", (dialog, which) -> {
                     int result = disciplineDAO.deleteKyLuat(discipline.getIdKyLuat());
-
                     if (result > 0) {
                         Toast.makeText(this, "Xóa thành công", Toast.LENGTH_SHORT).show();
                         loadData();

@@ -13,97 +13,82 @@ import java.util.List;
 
 public class RewardDAO {
     private DBHelper dbHelper;
-    private SQLiteDatabase database;
 
     public RewardDAO(Context context) {
         dbHelper = new DBHelper(context);
     }
 
-    public void open() {
-        database = dbHelper.getWritableDatabase();
-    }
-
-    public void close() {
-        if (database != null && database.isOpen()) {
-            database.close();
-        }
-    }
-
     public long insertKhenThuong(Reward reward) {
-        open();
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("id_nv", reward.getIdNhanVien());
-        values.put("ngay_quyet_dinh", reward.getNgayQuyetDinh());
-        values.put("hinh_thuc", reward.getHinhThuc());
-        values.put("so_tien_thuong", reward.getSoTienThuong());
-        values.put("ly_do", reward.getLyDo());
+        values.put(DBHelper.COL_ID_NV, reward.getIdNhanVien());
+        values.put(DBHelper.COL_NGAY_QUYET_DINH, reward.getNgayQuyetDinh());
+        values.put(DBHelper.COL_HINH_THUC, reward.getHinhThuc());
+        values.put(DBHelper.COL_SO_TIEN_THUONG, reward.getSoTienThuong());
+        values.put(DBHelper.COL_LY_DO, reward.getLyDo());
 
-        long result = database.insert("KhenThuong", null, values);
-        close();
+        long result = database.insert(DBHelper.TABLE_KHENTHUONG, null, values);
+        database.close();
         return result;
     }
 
     public int updateKhenThuong(Reward reward) {
-        open();
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("id_nv", reward.getIdNhanVien());
-        values.put("ngay_quyet_dinh", reward.getNgayQuyetDinh());
-        values.put("hinh_thuc", reward.getHinhThuc());
-        values.put("so_tien_thuong", reward.getSoTienThuong());
-        values.put("ly_do", reward.getLyDo());
+        values.put(DBHelper.COL_ID_NV, reward.getIdNhanVien());
+        values.put(DBHelper.COL_NGAY_QUYET_DINH, reward.getNgayQuyetDinh());
+        values.put(DBHelper.COL_HINH_THUC, reward.getHinhThuc());
+        values.put(DBHelper.COL_SO_TIEN_THUONG, reward.getSoTienThuong());
+        values.put(DBHelper.COL_LY_DO, reward.getLyDo());
 
         int result = database.update(
-                "KhenThuong",
+                DBHelper.TABLE_KHENTHUONG,
                 values,
-                "id_khen_thuong = ?",
+                DBHelper.COL_ID_KHENTHUONG + " = ?",
                 new String[]{String.valueOf(reward.getIdKhenThuong())}
         );
-        close();
+        database.close();
         return result;
     }
 
     public int deleteKhenThuong(int idKhenThuong) {
-        open();
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
         int result = database.delete(
-                "KhenThuong",
-                "id_khen_thuong = ?",
+                DBHelper.TABLE_KHENTHUONG,
+                DBHelper.COL_ID_KHENTHUONG + " = ?",
                 new String[]{String.valueOf(idKhenThuong)}
         );
-        close();
+        database.close();
         return result;
     }
 
     public List<Reward> getAllKhenThuong() {
         List<Reward> list = new ArrayList<>();
-        open();
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
 
-        String query = "SELECT kt.id_khen_thuong, kt.id_nv, kt.ngay_quyet_dinh, kt.hinh_thuc, " +
-                "kt.so_tien_thuong, kt.ly_do, nv.ho_ten, nv.ma_nv " +
-                "FROM KhenThuong kt " +
-                "INNER JOIN NhanVien nv ON kt.id_nv = nv.id_nv " +
-                "ORDER BY kt.id_khen_thuong DESC";
+        String query = "SELECT kt.*, nv." + DBHelper.COL_HO_TEN + ", nv." + DBHelper.COL_MA_NV +
+                " FROM " + DBHelper.TABLE_KHENTHUONG + " kt " +
+                " INNER JOIN " + DBHelper.TABLE_NHANVIEN + " nv ON kt." + DBHelper.COL_ID_NV + " = nv." + DBHelper.COL_ID_NV +
+                " ORDER BY kt." + DBHelper.COL_ID_KHENTHUONG + " DESC";
 
         Cursor cursor = database.rawQuery(query, null);
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 Reward kt = new Reward();
-                kt.setIdKhenThuong(cursor.getInt(cursor.getColumnIndexOrThrow("id_khen_thuong")));
-                kt.setIdNhanVien(cursor.getInt(cursor.getColumnIndexOrThrow("id_nv")));
-                kt.setNgayQuyetDinh(cursor.getString(cursor.getColumnIndexOrThrow("ngay_quyet_dinh")));
-                kt.setHinhThuc(cursor.getString(cursor.getColumnIndexOrThrow("hinh_thuc")));
-                kt.setSoTienThuong(cursor.getDouble(cursor.getColumnIndexOrThrow("so_tien_thuong")));
-                kt.setLyDo(cursor.getString(cursor.getColumnIndexOrThrow("ly_do")));
-                kt.setTenNhanVien(cursor.getString(cursor.getColumnIndexOrThrow("ho_ten")));
-                kt.setMaNhanVien(cursor.getString(cursor.getColumnIndexOrThrow("ma_nv")));
-
+                kt.setIdKhenThuong(cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.COL_ID_KHENTHUONG)));
+                kt.setIdNhanVien(cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.COL_ID_NV)));
+                kt.setNgayQuyetDinh(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_NGAY_QUYET_DINH)));
+                kt.setHinhThuc(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_HINH_THUC)));
+                kt.setSoTienThuong(cursor.getDouble(cursor.getColumnIndexOrThrow(DBHelper.COL_SO_TIEN_THUONG)));
+                kt.setLyDo(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_LY_DO)));
+                kt.setTenNhanVien(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_HO_TEN)));
+                kt.setMaNhanVien(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_MA_NV)));
                 list.add(kt);
             } while (cursor.moveToNext());
-
             cursor.close();
         }
-
-        close();
+        database.close();
         return list;
     }
 }

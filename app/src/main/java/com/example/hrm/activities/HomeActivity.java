@@ -17,9 +17,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.hrm.R;
 import com.example.hrm.dao.DepartmentDAO;
+import com.example.hrm.dao.EmployeeDAO;
 import com.google.android.material.navigation.NavigationView;
 
-import com.example.hrm.dao.EmployeeDAO;
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
@@ -29,7 +29,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private TextView tvTotalDepartments;
     private TextView tvTotalEmployees;
     private TextView tvPresentToday;
-    private TextView tvLeaveToday;
+    private TextView tvSalary;
 
     private TextView tvAccountName;
     private TextView tvAccountRole;
@@ -39,12 +39,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private CardView cardDepartments;
     private CardView cardEmployees;
     private CardView cardPresent;
-    private CardView cardLeave;
+    private CardView cardSalary;
 
     private LinearLayout menuDepartment;
     private LinearLayout menuEmployee;
     private LinearLayout menuAttendance;
-    private LinearLayout menuLeave;
+    private LinearLayout menuSalary;
     private LinearLayout menuReward;
     private LinearLayout menuDiscipline;
 
@@ -68,7 +68,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         tvTotalDepartments = findViewById(R.id.tvTotalDepartments);
         tvTotalEmployees = findViewById(R.id.tvTotalEmployees);
         tvPresentToday = findViewById(R.id.tvPresentToday);
-        tvLeaveToday = findViewById(R.id.tvLeaveToday);
+        tvSalary = findViewById(R.id.tvSalary);
 
         tvAccountName = findViewById(R.id.tvAccountName);
         tvAccountRole = findViewById(R.id.tvAccountRole);
@@ -78,12 +78,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         cardDepartments = findViewById(R.id.cardDepartments);
         cardEmployees = findViewById(R.id.cardEmployees);
         cardPresent = findViewById(R.id.cardPresent);
-        cardLeave = findViewById(R.id.cardLeave);
+        cardSalary = findViewById(R.id.cardSalary);
 
         menuDepartment = findViewById(R.id.menuDepartment);
         menuEmployee = findViewById(R.id.menuEmployee);
         menuAttendance = findViewById(R.id.menuAttendance);
-        menuLeave = findViewById(R.id.menuLeave);
+        menuSalary = findViewById(R.id.menuSalary);
         menuReward = findViewById(R.id.menuReward);
         menuDiscipline = findViewById(R.id.menuDiscipline);
     }
@@ -123,12 +123,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         int totalDepartments = getDepartmentCountFromDB();
         int totalEmployees = getEmployeeCountFromDB();
         int presentToday = 0;
-        int leaveToday = 0;
 
         tvTotalDepartments.setText(String.valueOf(totalDepartments));
         tvTotalEmployees.setText(String.valueOf(totalEmployees));
         tvPresentToday.setText(String.valueOf(presentToday));
-        tvLeaveToday.setText(String.valueOf(leaveToday));
+        tvSalary.setText("=)))");
     }
 
     private int getDepartmentCountFromDB() {
@@ -140,6 +139,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             return 0;
         }
     }
+
     private int getEmployeeCountFromDB() {
         try {
             EmployeeDAO employeeDAO = new EmployeeDAO(this);
@@ -154,12 +154,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         cardDepartments.setOnClickListener(v -> openDepartment());
         cardEmployees.setOnClickListener(v -> openEmployee());
         cardPresent.setOnClickListener(v -> openAttendance());
-        cardLeave.setOnClickListener(v -> openLeave());
+        cardSalary.setOnClickListener(v -> openSalary());
 
         menuDepartment.setOnClickListener(v -> openDepartment());
         menuEmployee.setOnClickListener(v -> openEmployee());
         menuAttendance.setOnClickListener(v -> openAttendance());
-        menuLeave.setOnClickListener(v -> openLeave());
+        menuSalary.setOnClickListener(v -> openSalary());
         menuReward.setOnClickListener(v -> openReward());
         menuDiscipline.setOnClickListener(v -> openDiscipline());
     }
@@ -176,8 +176,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         startActivity(new Intent(HomeActivity.this, AttendanceActivity.class));
     }
 
-    private void openLeave() {
-        Toast.makeText(this, "Chức năng đang phát triển", Toast.LENGTH_SHORT).show();
+    private void openSalary() {
+        startActivity(new Intent(HomeActivity.this, SalaryActivity.class));
     }
 
     private void openReward() {
@@ -204,8 +204,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_attendance) {
             openAttendance();
 
-        } else if (id == R.id.nav_leave) {
-            openLeave();
+        } else if (id == R.id.nav_salary) {
+            openSalary();
 
         } else if (id == R.id.nav_reward) {
             openReward();

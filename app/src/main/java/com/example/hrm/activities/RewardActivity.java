@@ -1,6 +1,7 @@
 package com.example.hrm.activities;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -25,8 +26,11 @@ import com.example.hrm.models.Employee;
 import com.example.hrm.models.Reward;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.example.hrm.listeners.OnItemActionListener;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class RewardActivity extends AppCompatActivity {
 
@@ -81,6 +85,7 @@ public class RewardActivity extends AppCompatActivity {
             public void onDelete(Reward reward) {
                 confirmDeleteKhenThuong(reward);
             }
+
             @Override
             public void onItemClick(Reward reward) {
             }
@@ -122,6 +127,9 @@ public class RewardActivity extends AppCompatActivity {
     private void setupToolbar() {
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbarKhenThuong);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         toolbar.setNavigationOnClickListener(v -> finish());
     }
 
@@ -153,10 +161,12 @@ public class RewardActivity extends AppCompatActivity {
         Spinner spNhanVien = view.findViewById(R.id.spNhanVien);
         EditText edtNgayQuyetDinh = view.findViewById(R.id.edtNgayQuyetDinh);
         EditText edtHinhThuc = view.findViewById(R.id.edtHinhThuc);
-        EditText edtSoTienThuong = view.findViewById(R.id.edtSoTienThuong);
+        EditText edtSoTienThuong = view.findViewById(R.id.edtSoTien);
         EditText edtLyDo = view.findViewById(R.id.edtLyDo);
         Button btnSave = view.findViewById(R.id.btnSaveKhenThuong);
         Button btnClose = view.findViewById(R.id.btnCloseDialog);
+
+        setupDatePicker(edtNgayQuyetDinh);
 
         employeeList = getEmployeeList();
         setupEmployeeSpinner(spNhanVien, employeeList);
@@ -164,6 +174,22 @@ public class RewardActivity extends AppCompatActivity {
         setupCloseButton(dialog, btnClose);
         setupSaveKhenThuongButton(dialog, reward, isEdit, spNhanVien,
                 edtNgayQuyetDinh, edtHinhThuc, edtSoTienThuong, edtLyDo, btnSave);
+    }
+
+    private void setupDatePicker(EditText edtNgayQuyetDinh) {
+        edtNgayQuyetDinh.setFocusable(false);
+        edtNgayQuyetDinh.setOnClickListener(v -> {
+            Calendar cal = Calendar.getInstance();
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+
+            new DatePickerDialog(this, (view, selectedYear, selectedMonth, selectedDay) -> {
+                String date = String.format(Locale.getDefault(), "%d-%02d-%02d",
+                        selectedYear, selectedMonth + 1, selectedDay);
+                edtNgayQuyetDinh.setText(date);
+            }, year, month, day).show();
+        });
     }
 
     private AlertDialog createKhenThuongDialog(View view) {
@@ -254,9 +280,9 @@ public class RewardActivity extends AppCompatActivity {
             Employee selectedEmployee = employeeList.get(spNhanVien.getSelectedItemPosition());
 
             if (isEdit && reward != null) {
-                updateKhenThuong(dialog, reward, selectedEmployee, ngayQuyetDinh, hinhThuc, soTienThuong, lyDo);
+                updateExistingKhenThuong(dialog, reward, selectedEmployee, ngayQuyetDinh, hinhThuc, soTienThuong, lyDo);
             } else {
-                insertKhenThuong(dialog, selectedEmployee, ngayQuyetDinh, hinhThuc, soTienThuong, lyDo);
+                addNewKhenThuong(dialog, selectedEmployee, ngayQuyetDinh, hinhThuc, soTienThuong, lyDo);
             }
         });
     }
@@ -289,29 +315,21 @@ public class RewardActivity extends AppCompatActivity {
             return null;
         }
 
-        double soTienThuong;
         try {
-            soTienThuong = Double.parseDouble(soTienThuongStr);
-        } catch (Exception e) {
+            double soTien = Double.parseDouble(soTienThuongStr);
+            if (soTien < 0) {
+                edtSoTienThuong.setError("Số tiền thưởng phải >= 0");
+                return null;
+            }
+            return soTien;
+        } catch (NumberFormatException e) {
             edtSoTienThuong.setError("Số tiền thưởng không hợp lệ");
             return null;
         }
-
-        if (soTienThuong < 0) {
-            edtSoTienThuong.setError("Số tiền thưởng phải >= 0");
-            return null;
-        }
-
-        return soTienThuong;
     }
 
-    private void updateKhenThuong(AlertDialog dialog,
-                                  Reward reward,
-                                  Employee selectedEmployee,
-                                  String ngayQuyetDinh,
-                                  String hinhThuc,
-                                  double soTienThuong,
-                                  String lyDo) {
+    private void updateExistingKhenThuong(AlertDialog dialog, Reward reward, Employee selectedEmployee,
+                                          String ngayQuyetDinh, String hinhThuc, double soTienThuong, String lyDo) {
         reward.setIdNhanVien(selectedEmployee.getIdNv());
         reward.setNgayQuyetDinh(ngayQuyetDinh);
         reward.setHinhThuc(hinhThuc);
@@ -328,12 +346,8 @@ public class RewardActivity extends AppCompatActivity {
         }
     }
 
-    private void insertKhenThuong(AlertDialog dialog,
-                                  Employee selectedEmployee,
-                                  String ngayQuyetDinh,
-                                  String hinhThuc,
-                                  double soTienThuong,
-                                  String lyDo) {
+    private void addNewKhenThuong(AlertDialog dialog, Employee selectedEmployee, String ngayQuyetDinh,
+                                  String hinhThuc, double soTienThuong, String lyDo) {
         Reward newReward = new Reward();
         newReward.setIdNhanVien(selectedEmployee.getIdNv());
         newReward.setNgayQuyetDinh(ngayQuyetDinh);
@@ -357,7 +371,6 @@ public class RewardActivity extends AppCompatActivity {
                 .setMessage("Bạn có chắc muốn xóa không?")
                 .setPositiveButton("Xóa", (dialog, which) -> {
                     int result = rewardDAO.deleteKhenThuong(reward.getIdKhenThuong());
-
                     if (result > 0) {
                         Toast.makeText(this, "Xóa thành công", Toast.LENGTH_SHORT).show();
                         loadData();

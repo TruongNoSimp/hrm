@@ -4,140 +4,77 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
 import com.example.hrm.database.DBHelper;
 import com.example.hrm.models.Discipline;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class DisciplineDAO {
     private DBHelper dbHelper;
-    private SQLiteDatabase database;
 
     public DisciplineDAO(Context context) {
         dbHelper = new DBHelper(context);
     }
 
-    public void open() {
-        database = dbHelper.getWritableDatabase();
+    public long insertKyLuat(Discipline d) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put(DBHelper.COL_ID_NV, d.getIdNhanVien());
+        v.put(DBHelper.COL_NGAY_QUYET_DINH, d.getNgayQuyetDinh());
+        v.put(DBHelper.COL_HINH_THUC, d.getHinhThuc());
+        v.put(DBHelper.COL_SO_TIEN_PHAT, d.getSoTienPhat());
+        v.put(DBHelper.COL_LY_DO, d.getLyDo());
+        long res = db.insert(DBHelper.TABLE_KYLUAT, null, v);
+        db.close();
+        return res;
     }
 
-    public void close() {
-        if (database != null && database.isOpen()) {
-            database.close();
-        }
+    public int updateKyLuat(Discipline d) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put(DBHelper.COL_ID_NV, d.getIdNhanVien());
+        v.put(DBHelper.COL_NGAY_QUYET_DINH, d.getNgayQuyetDinh());
+        v.put(DBHelper.COL_HINH_THUC, d.getHinhThuc());
+        v.put(DBHelper.COL_SO_TIEN_PHAT, d.getSoTienPhat());
+        v.put(DBHelper.COL_LY_DO, d.getLyDo());
+        int res = db.update(DBHelper.TABLE_KYLUAT, v, DBHelper.COL_ID_KYLUAT + " = ?",
+                new String[]{String.valueOf(d.getIdKyLuat())});
+        db.close();
+        return res;
     }
 
-    public long insertKyLuat(Discipline discipline) {
-        open();
-        ContentValues values = new ContentValues();
-        values.put("id_nv", discipline.getIdNhanVien());
-        values.put("ngay_quyet_dinh", discipline.getNgayQuyetDinh());
-        values.put("hinh_thuc", discipline.getHinhThuc());
-        values.put("so_tien_phat", discipline.getSoTienPhat());
-        values.put("ly_do", discipline.getLyDo());
-
-        long result = database.insert("KyLuat", null, values);
-        close();
-        return result;
-    }
-
-    public int updateKyLuat(Discipline discipline) {
-        open();
-        ContentValues values = new ContentValues();
-        values.put("id_nv", discipline.getIdNhanVien());
-        values.put("ngay_quyet_dinh", discipline.getNgayQuyetDinh());
-        values.put("hinh_thuc", discipline.getHinhThuc());
-        values.put("so_tien_phat", discipline.getSoTienPhat());
-        values.put("ly_do", discipline.getLyDo());
-
-        int result = database.update(
-                "KyLuat",
-                values,
-                "id_ky_luat = ?",
-                new String[]{String.valueOf(discipline.getIdKyLuat())}
-        );
-        close();
-        return result;
-    }
-
-    public int deleteKyLuat(int idKyLuat) {
-        open();
-        int result = database.delete(
-                "KyLuat",
-                "id_ky_luat = ?",
-                new String[]{String.valueOf(idKyLuat)}
-        );
-        close();
-        return result;
+    public int deleteKyLuat(int id) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int res = db.delete(DBHelper.TABLE_KYLUAT, DBHelper.COL_ID_KYLUAT + " = ?",
+                new String[]{String.valueOf(id)});
+        db.close();
+        return res;
     }
 
     public List<Discipline> getAllKyLuat() {
         List<Discipline> list = new ArrayList<>();
-        open();
-
-        String query = "SELECT kl.id_ky_luat, kl.id_nv, kl.ngay_quyet_dinh, kl.hinh_thuc, " +
-                "kl.so_tien_phat, kl.ly_do, nv.ho_ten, nv.ma_nv " +
-                "FROM KyLuat kl " +
-                "INNER JOIN NhanVien nv ON kl.id_nv = nv.id_nv " +
-                "ORDER BY kl.id_ky_luat DESC";
-
-        Cursor cursor = database.rawQuery(query, null);
-
-        if (cursor != null && cursor.moveToFirst()) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String sql = "SELECT kl.*, nv." + DBHelper.COL_HO_TEN + ", nv." + DBHelper.COL_MA_NV +
+                " FROM " + DBHelper.TABLE_KYLUAT + " kl " +
+                " INNER JOIN " + DBHelper.TABLE_NHANVIEN + " nv ON kl." + DBHelper.COL_ID_NV + " = nv." + DBHelper.COL_ID_NV +
+                " ORDER BY kl." + DBHelper.COL_ID_KYLUAT + " DESC";
+        Cursor c = db.rawQuery(sql, null);
+        if (c != null && c.moveToFirst()) {
             do {
-                Discipline discipline = new Discipline();
-                discipline.setIdKyLuat(cursor.getInt(cursor.getColumnIndexOrThrow("id_ky_luat")));
-                discipline.setIdNhanVien(cursor.getInt(cursor.getColumnIndexOrThrow("id_nv")));
-                discipline.setNgayQuyetDinh(cursor.getString(cursor.getColumnIndexOrThrow("ngay_quyet_dinh")));
-                discipline.setHinhThuc(cursor.getString(cursor.getColumnIndexOrThrow("hinh_thuc")));
-                discipline.setSoTienPhat(cursor.getDouble(cursor.getColumnIndexOrThrow("so_tien_phat")));
-                discipline.setLyDo(cursor.getString(cursor.getColumnIndexOrThrow("ly_do")));
-                discipline.setTenNhanVien(cursor.getString(cursor.getColumnIndexOrThrow("ho_ten")));
-                discipline.setMaNhanVien(cursor.getString(cursor.getColumnIndexOrThrow("ma_nv")));
-
-                list.add(discipline);
-            } while (cursor.moveToNext());
-
-            cursor.close();
+                Discipline d = new Discipline();
+                d.setIdKyLuat(c.getInt(c.getColumnIndexOrThrow(DBHelper.COL_ID_KYLUAT)));
+                d.setIdNhanVien(c.getInt(c.getColumnIndexOrThrow(DBHelper.COL_ID_NV)));
+                d.setNgayQuyetDinh(c.getString(c.getColumnIndexOrThrow(DBHelper.COL_NGAY_QUYET_DINH)));
+                d.setHinhThuc(c.getString(c.getColumnIndexOrThrow(DBHelper.COL_HINH_THUC)));
+                d.setSoTienPhat(c.getDouble(c.getColumnIndexOrThrow(DBHelper.COL_SO_TIEN_PHAT)));
+                d.setLyDo(c.getString(c.getColumnIndexOrThrow(DBHelper.COL_LY_DO)));
+                d.setTenNhanVien(c.getString(c.getColumnIndexOrThrow(DBHelper.COL_HO_TEN)));
+                d.setMaNhanVien(c.getString(c.getColumnIndexOrThrow(DBHelper.COL_MA_NV)));
+                list.add(d);
+            } while (c.moveToNext());
+            c.close();
         }
-
-        close();
-        return list;
-    }
-
-    public List<Discipline> searchKyLuat(String keyword) {
-        List<Discipline> list = new ArrayList<>();
-        open();
-
-        String query = "SELECT kl.id_ky_luat, kl.id_nv, kl.ngay_quyet_dinh, kl.hinh_thuc, " +
-                "kl.so_tien_phat, kl.ly_do, nv.ho_ten, nv.ma_nv " +
-                "FROM KyLuat kl " +
-                "INNER JOIN NhanVien nv ON kl.id_nv = nv.id_nv " +
-                "WHERE nv.ho_ten LIKE ? OR nv.ma_nv LIKE ? " +
-                "ORDER BY kl.id_ky_luat DESC";
-
-        String searchKey = "%" + keyword + "%";
-        Cursor cursor = database.rawQuery(query, new String[]{searchKey, searchKey});
-
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                Discipline discipline = new Discipline();
-                discipline.setIdKyLuat(cursor.getInt(cursor.getColumnIndexOrThrow("id_ky_luat")));
-                discipline.setIdNhanVien(cursor.getInt(cursor.getColumnIndexOrThrow("id_nv")));
-                discipline.setNgayQuyetDinh(cursor.getString(cursor.getColumnIndexOrThrow("ngay_quyet_dinh")));
-                discipline.setHinhThuc(cursor.getString(cursor.getColumnIndexOrThrow("hinh_thuc")));
-                discipline.setSoTienPhat(cursor.getDouble(cursor.getColumnIndexOrThrow("so_tien_phat")));
-                discipline.setLyDo(cursor.getString(cursor.getColumnIndexOrThrow("ly_do")));
-                discipline.setTenNhanVien(cursor.getString(cursor.getColumnIndexOrThrow("ho_ten")));
-                discipline.setMaNhanVien(cursor.getString(cursor.getColumnIndexOrThrow("ma_nv")));
-
-                list.add(discipline);
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-        close();
+        db.close();
         return list;
     }
 }
