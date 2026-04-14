@@ -177,8 +177,6 @@ public class EmployeeActivity extends AppCompatActivity {
         Spinner spinnerTrangThai = view.findViewById(R.id.spinnerTrangThai);
         Button btnSaveEmployee = view.findViewById(R.id.btnSaveEmployee);
         Button btnCloseEmployeeDialog = view.findViewById(R.id.btnCloseEmployeeDialog);
-        Button btnNgaySinh = view.findViewById(R.id.btnNgaySinh);
-        Button btnNgayVaoLam = view.findViewById(R.id.btnNgayVaoLam);
 
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -192,8 +190,8 @@ public class EmployeeActivity extends AppCompatActivity {
             startActivityForResult(intent, PICK_IMAGE_REQUEST);
         });
 
-        btnNgaySinh.setOnClickListener(v -> showDatePicker(edtNgaySinh, true));
-        btnNgayVaoLam.setOnClickListener(v -> showDatePicker(edtNgayVaoLam, false));
+        edtNgaySinh.setOnClickListener(v -> showDatePicker(edtNgaySinh, true));
+        edtNgayVaoLam.setOnClickListener(v -> showDatePicker(edtNgayVaoLam, false));
 
         List<Department> departmentList = employeeDAO.getAllDepartments();
         List<String> departmentNames = new ArrayList<>();
