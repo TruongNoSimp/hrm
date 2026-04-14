@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_add"
+        android:title="Thêm phòng ban" />
+
+    <item
+        android:id="@+id/menu_refresh"
+        android:title="Làm mới" />
+</menu>
