@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hrm.R;
+import com.example.hrm.listeners.OnEmployeeActionListener;
 import com.example.hrm.models.Employee;
 
 import java.util.List;
@@ -20,11 +21,6 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
     private final List<Employee> employeeList;
     private final OnEmployeeActionListener listener;
 
-    public interface OnEmployeeActionListener {
-        void onEdit(Employee employee);
-        void onDelete(Employee employee);
-        void onItemClick(Employee employee);
-    }
 
     public EmployeeAdapter(List<Employee> employeeList, OnEmployeeActionListener listener) {
         this.employeeList = employeeList;

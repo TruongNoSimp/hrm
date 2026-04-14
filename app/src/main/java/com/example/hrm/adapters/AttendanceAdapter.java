@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hrm.R;
 import com.example.hrm.dto.EmployeeAttendanceDTO;
+import com.example.hrm.listeners.OnAttendanceClickListener;
 import com.example.hrm.models.Employee;
 
 import java.util.Calendar;
@@ -27,9 +28,6 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.At
     private List<EmployeeAttendanceDTO> employeeList;
     private OnAttendanceClickListener listener;
 
-    public interface OnAttendanceClickListener {
-        void onCheckInClick(Employee employee, String selectedTime);
-    }
 
     public AttendanceAdapter(Context context, List<EmployeeAttendanceDTO> employeeList, OnAttendanceClickListener listener) {
         this.context = context;

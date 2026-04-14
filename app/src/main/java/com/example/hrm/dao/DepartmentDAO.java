@@ -36,7 +36,6 @@ public class DepartmentDAO {
                 list.add(d);
             } while (cursor.moveToNext());
         }
-
         cursor.close();
         db.close();
         return list;

@@ -36,6 +36,12 @@
         <activity
             android:name=".activities.AttendanceActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.RewardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.DisciplineActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

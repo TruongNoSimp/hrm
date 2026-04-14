@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -27,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hrm.R;
 import com.example.hrm.adapters.EmployeeAdapter;
 import com.example.hrm.dao.EmployeeDAO;
+import com.example.hrm.listeners.OnEmployeeActionListener;
 import com.example.hrm.models.Department;
 import com.example.hrm.models.Employee;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -73,7 +73,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
         recyclerViewEmployee.setLayoutManager(new LinearLayoutManager(this));
 
-        employeeAdapter = new EmployeeAdapter(employeeList, new EmployeeAdapter.OnEmployeeActionListener() {
+        employeeAdapter = new EmployeeAdapter(employeeList, new OnEmployeeActionListener() {
             @Override
             public void onEdit(Employee employee) {
                 showEmployeeDialog(employee, true);
@@ -144,11 +144,10 @@ public class EmployeeActivity extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri imageUri = data.getData();
 
-            final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION);
             try {
                 getContentResolver().takePersistableUriPermission(imageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             } catch (SecurityException e) {
-                e.printStackTrace();
+                android.util.Log.e("EmployeeActivity", "Error taking persistable URI permission", e);
             }
 
             currentAvatarUri = imageUri.toString();
@@ -159,142 +158,149 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void showEmployeeDialog(Employee employee, boolean isEdit) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_employee, null);
-        builder.setView(view);
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_employee, null);
+            builder.setView(view);
 
-        imgDialogAvatar = view.findViewById(R.id.imgDialogAvatar);
-        EditText edtMaNv = view.findViewById(R.id.edtMaNv);
-        EditText edtHoTen = view.findViewById(R.id.edtHoTen);
-        EditText edtNgaySinh = view.findViewById(R.id.edtNgaySinh);
-        Spinner spinnerGioiTinh = view.findViewById(R.id.spinnerGioiTinh);
-        EditText edtSoDt = view.findViewById(R.id.edtSoDt);
-        EditText edtEmail = view.findViewById(R.id.edtEmail);
-        Spinner spinnerPhongBan = view.findViewById(R.id.spinnerPhongBan);
-        EditText edtChucVu = view.findViewById(R.id.edtChucVu);
-        EditText edtNgayVaoLam = view.findViewById(R.id.edtNgayVaoLam);
-        EditText edtHeSoLuong = view.findViewById(R.id.edtHeSoLuong);
-        Spinner spinnerTrangThai = view.findViewById(R.id.spinnerTrangThai);
-        Button btnSaveEmployee = view.findViewById(R.id.btnSaveEmployee);
-        Button btnCloseEmployeeDialog = view.findViewById(R.id.btnCloseEmployeeDialog);
+            imgDialogAvatar = view.findViewById(R.id.imgDialogAvatar);
+            EditText edtMaNv = view.findViewById(R.id.edtMaNv);
+            EditText edtHoTen = view.findViewById(R.id.edtHoTen);
+            EditText edtNgaySinh = view.findViewById(R.id.edtNgaySinh);
+            Spinner spinnerGioiTinh = view.findViewById(R.id.spinnerGioiTinh);
+            EditText edtSoDt = view.findViewById(R.id.edtSoDt);
+            EditText edtEmail = view.findViewById(R.id.edtEmail);
+            Spinner spinnerPhongBan = view.findViewById(R.id.spinnerPhongBan);
+            EditText edtChucVu = view.findViewById(R.id.edtChucVu);
+            EditText edtNgayVaoLam = view.findViewById(R.id.edtNgayVaoLam);
+            EditText edtHeSoLuong = view.findViewById(R.id.edtHeSoLuong);
+            Spinner spinnerTrangThai = view.findViewById(R.id.spinnerTrangThai);
+            Button btnSaveEmployee = view.findViewById(R.id.btnSaveEmployee);
+            Button btnCloseEmployeeDialog = view.findViewById(R.id.btnCloseEmployeeDialog);
 
-        AlertDialog dialog = builder.create();
-        dialog.show();
+            AlertDialog dialog = builder.create();
+            dialog.show();
 
-        imgDialogAvatar.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("image/*");
-            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivityForResult(intent, PICK_IMAGE_REQUEST);
-        });
+            imgDialogAvatar.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("image/*");
+                intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivityForResult(intent, PICK_IMAGE_REQUEST);
+            });
 
-        edtNgaySinh.setOnClickListener(v -> showDatePicker(edtNgaySinh, true));
-        edtNgayVaoLam.setOnClickListener(v -> showDatePicker(edtNgayVaoLam, false));
+            edtNgaySinh.setOnClickListener(v -> showDatePicker(edtNgaySinh));
+            edtNgayVaoLam.setOnClickListener(v -> showDatePicker(edtNgayVaoLam));
 
-        List<Department> departmentList = employeeDAO.getAllDepartments();
-        List<String> departmentNames = new ArrayList<>();
-        for (Department d : departmentList) { departmentNames.add(d.getTenPhong()); }
+            List<Department> departmentList = employeeDAO.getAllDepartments();
+            List<String> departmentNames = new ArrayList<>();
+            for (Department d : departmentList) { departmentNames.add(d.getTenPhong()); }
 
-        ArrayAdapter<String> adapterGT = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Nam", "Nữ", "Khác"});
-        adapterGT.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerGioiTinh.setAdapter(adapterGT);
+            ArrayAdapter<String> adapterGT = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Nam", "Nữ", "Khác"});
+            adapterGT.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerGioiTinh.setAdapter(adapterGT);
 
-        ArrayAdapter<String> adapterPB = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, departmentNames);
-        adapterPB.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerPhongBan.setAdapter(adapterPB);
+            ArrayAdapter<String> adapterPB = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, departmentNames);
+            adapterPB.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerPhongBan.setAdapter(adapterPB);
 
-        ArrayAdapter<String> adapterTT = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Đang làm", "Đã nghỉ"});
-        adapterTT.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerTrangThai.setAdapter(adapterTT);
-
-        if (isEdit && employee != null) {
-            currentAvatarUri = employee.getAvatar() != null ? employee.getAvatar() : "";
-            if (!currentAvatarUri.isEmpty()) { imgDialogAvatar.setImageURI(Uri.parse(currentAvatarUri)); }
-            edtMaNv.setText(employee.getMaNv());
-            edtHoTen.setText(employee.getHoTen());
-            edtNgaySinh.setText(employee.getNgaySinh());
-            edtSoDt.setText(employee.getSoDt());
-            edtEmail.setText(employee.getEmail());
-            edtChucVu.setText(employee.getChucVu());
-            edtNgayVaoLam.setText(employee.getNgayVaoLam());
-            edtHeSoLuong.setText(String.valueOf(employee.getHeSoLuong()));
-            edtMaNv.setEnabled(false);
-
-            setSpinnerSelection(spinnerGioiTinh, employee.getGioiTinh());
-            setDepartmentSelection(spinnerPhongBan, departmentList, employee.getIdPhongBan());
-            spinnerTrangThai.setSelection(employee.getTrangThai() == 1 ? 0 : 1);
-        } else {
-            currentAvatarUri = "";
-        }
-
-        btnCloseEmployeeDialog.setOnClickListener(v -> dialog.dismiss());
-
-        btnSaveEmployee.setOnClickListener(v -> {
-            String maNv = edtMaNv.getText().toString().trim();
-            String hoTen = edtHoTen.getText().toString().trim();
-            String chucVu = edtChucVu.getText().toString().trim();
-            String heSoLuongStr = edtHeSoLuong.getText().toString().trim();
-
-            if (TextUtils.isEmpty(maNv)) { edtMaNv.setError("Cần mã NV"); return; }
-            if (TextUtils.isEmpty(hoTen)) { edtHoTen.setError("Cần họ tên"); return; }
-            if (TextUtils.isEmpty(chucVu)) { edtChucVu.setError("Cần chức vụ"); return; }
-
-            double heSoLuong;
-            try { heSoLuong = Double.parseDouble(heSoLuongStr); } catch (Exception e) { heSoLuong = 0; }
-
-            int idPhongBan = departmentList.get(spinnerPhongBan.getSelectedItemPosition()).getIdPhongBan();
-            int trangThai = spinnerTrangThai.getSelectedItemPosition() == 0 ? 1 : 0;
+            ArrayAdapter<String> adapterTT = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Đang làm", "Đã nghỉ"});
+            adapterTT.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerTrangThai.setAdapter(adapterTT);
 
             if (isEdit && employee != null) {
-                employee.setHoTen(hoTen);
-                employee.setChucVu(chucVu);
-                employee.setNgaySinh(edtNgaySinh.getText().toString());
-                employee.setGioiTinh(spinnerGioiTinh.getSelectedItem().toString());
-                employee.setSoDt(edtSoDt.getText().toString());
-                employee.setEmail(edtEmail.getText().toString());
-                employee.setIdPhongBan(idPhongBan);
-                employee.setNgayVaoLam(edtNgayVaoLam.getText().toString());
-                employee.setHeSoLuong(heSoLuong);
-                employee.setTrangThai(trangThai);
-                employee.setAvatar(currentAvatarUri);
+                currentAvatarUri = employee.getAvatar() != null ? employee.getAvatar() : "";
+                if (!currentAvatarUri.isEmpty()) { imgDialogAvatar.setImageURI(Uri.parse(currentAvatarUri)); }
+                edtMaNv.setText(employee.getMaNv());
+                edtHoTen.setText(employee.getHoTen());
+                edtNgaySinh.setText(employee.getNgaySinh());
+                edtSoDt.setText(employee.getSoDt());
+                edtEmail.setText(employee.getEmail());
+                edtChucVu.setText(employee.getChucVu());
+                edtNgayVaoLam.setText(employee.getNgayVaoLam());
+                edtHeSoLuong.setText(String.valueOf(employee.getHeSoLuong()));
+                edtMaNv.setEnabled(false);
 
-                if (employeeDAO.updateEmployee(employee)) {
-                    loadEmployees();
-                    dialog.dismiss();
-                    Toast.makeText(this, "Đã cập nhật", Toast.LENGTH_SHORT).show();
-                }
+                setSpinnerSelection(spinnerGioiTinh, employee.getGioiTinh());
+                setDepartmentSelection(spinnerPhongBan, departmentList, employee.getIdPhongBan());
+                spinnerTrangThai.setSelection(employee.getTrangThai() == 1 ? 0 : 1);
             } else {
-                Employee newEmployee = new Employee();
-                newEmployee.setMaNv(maNv);
-                newEmployee.setHoTen(hoTen);
-                newEmployee.setChucVu(chucVu);
-                newEmployee.setNgaySinh(edtNgaySinh.getText().toString());
-                newEmployee.setGioiTinh(spinnerGioiTinh.getSelectedItem().toString());
-                newEmployee.setSoDt(edtSoDt.getText().toString());
-                newEmployee.setEmail(edtEmail.getText().toString());
-                newEmployee.setIdPhongBan(idPhongBan);
-                newEmployee.setNgayVaoLam(edtNgayVaoLam.getText().toString());
-                newEmployee.setHeSoLuong(heSoLuong);
-                newEmployee.setTrangThai(trangThai);
-                newEmployee.setAvatar(currentAvatarUri);
-
-                if (employeeDAO.insertEmployee(newEmployee)) {
-                    loadEmployees();
-                    dialog.dismiss();
-                    Toast.makeText(this, "Đã thêm", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "Mã trùng!", Toast.LENGTH_SHORT).show();
-                }
+                currentAvatarUri = "";
             }
-        });
+
+            btnCloseEmployeeDialog.setOnClickListener(v -> dialog.dismiss());
+
+            btnSaveEmployee.setOnClickListener(v -> {
+                String maNv = edtMaNv.getText().toString().trim();
+                String hoTen = edtHoTen.getText().toString().trim();
+                String chucVu = edtChucVu.getText().toString().trim();
+                String heSoLuongStr = edtHeSoLuong.getText().toString().trim();
+
+                if (TextUtils.isEmpty(maNv)) { edtMaNv.setError("Cần mã NV"); return; }
+                if (TextUtils.isEmpty(hoTen)) { edtHoTen.setError("Cần họ tên"); return; }
+                if (TextUtils.isEmpty(chucVu)) { edtChucVu.setError("Cần chức vụ"); return; }
+
+                double heSoLuong;
+                try { heSoLuong = Double.parseDouble(heSoLuongStr); } catch (Exception e) { heSoLuong = 0; }
+
+                int idPhongBan = departmentList.get(spinnerPhongBan.getSelectedItemPosition()).getIdPhongBan();
+                int trangThai = spinnerTrangThai.getSelectedItemPosition() == 0 ? 1 : 0;
+
+                if (isEdit && employee != null) {
+                    employee.setHoTen(hoTen);
+                    employee.setChucVu(chucVu);
+                    employee.setNgaySinh(edtNgaySinh.getText().toString());
+                    employee.setGioiTinh(spinnerGioiTinh.getSelectedItem().toString());
+                    employee.setSoDt(edtSoDt.getText().toString());
+                    employee.setEmail(edtEmail.getText().toString());
+                    employee.setIdPhongBan(idPhongBan);
+                    employee.setNgayVaoLam(edtNgayVaoLam.getText().toString());
+                    employee.setHeSoLuong(heSoLuong);
+                    employee.setTrangThai(trangThai);
+                    employee.setAvatar(currentAvatarUri);
+
+                    if (employeeDAO.updateEmployee(employee)) {
+                        loadEmployees();
+                        dialog.dismiss();
+                        Toast.makeText(this, "Đã cập nhật", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Employee newEmployee = new Employee();
+                    newEmployee.setMaNv(maNv);
+                    newEmployee.setHoTen(hoTen);
+                    newEmployee.setChucVu(chucVu);
+                    newEmployee.setNgaySinh(edtNgaySinh.getText().toString());
+                    newEmployee.setGioiTinh(spinnerGioiTinh.getSelectedItem().toString());
+                    newEmployee.setSoDt(edtSoDt.getText().toString());
+                    newEmployee.setEmail(edtEmail.getText().toString());
+                    newEmployee.setIdPhongBan(idPhongBan);
+                    newEmployee.setNgayVaoLam(edtNgayVaoLam.getText().toString());
+                    newEmployee.setHeSoLuong(heSoLuong);
+                    newEmployee.setTrangThai(trangThai);
+                    newEmployee.setAvatar(currentAvatarUri);
+
+                    if (employeeDAO.insertEmployee(newEmployee)) {
+                        loadEmployees();
+                        dialog.dismiss();
+                        Toast.makeText(this, "Đã thêm", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Mã trùng!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            android.util.Log.e("EmployeeActivity", "Error in showEmployeeDialog", e);
+        }
     }
 
     private void setSpinnerSelection(Spinner spinner, String value) {
+        if (value == null) return;
         ArrayAdapter<?> adapter = (ArrayAdapter<?>) spinner.getAdapter();
         for (int i = 0; i < adapter.getCount(); i++) {
-            if (adapter.getItem(i).toString().equalsIgnoreCase(value)) {
+            Object item = adapter.getItem(i);
+            if (item != null && item.toString().equalsIgnoreCase(value)) {
                 spinner.setSelection(i);
                 break;
             }
@@ -322,7 +328,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 .setNegativeButton("Hủy", null).show();
     }
 
-    private void showDatePicker(EditText editText, boolean isNgaySinh) {
+    private void showDatePicker(EditText editText) {
         Calendar calendar = Calendar.getInstance();
 
         // Nếu đã có ngày được chọn, parse nó để set initial date
@@ -333,7 +339,7 @@ public class EmployeeActivity extends AppCompatActivity {
                     calendar.set(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) - 1, Integer.parseInt(parts[2]));
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                android.util.Log.e("EmployeeActivity", "Error parsing date", e);
             }
         }
 
@@ -344,7 +350,7 @@ public class EmployeeActivity extends AppCompatActivity {
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-                    String date = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                    String date = String.format(java.util.Locale.US, "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
                     editText.setText(date);
                 },
                 year, month, day

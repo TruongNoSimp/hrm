@@ -24,30 +24,30 @@ public class EmployeeDAO {
         List<Employee> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String sql = "SELECT nv.*, pb.ten_phong " +
-                "FROM NhanVien nv " +
-                "LEFT JOIN PhongBan pb ON nv.id_phong_ban_fk = pb.id_phong_ban " +
-                "ORDER BY nv.id_nv DESC";
+        String sql = "SELECT nv.*, pb." + DBHelper.COL_TEN_PB + " " +
+                "FROM " + DBHelper.TABLE_NHANVIEN + " nv " +
+                "LEFT JOIN " + DBHelper.TABLE_PHONGBAN + " pb ON nv." + DBHelper.COL_ID_PB_FK + " = pb." + DBHelper.COL_ID_PB + " " +
+                "ORDER BY nv." + DBHelper.COL_ID_NV + " DESC";
 
         Cursor cursor = db.rawQuery(sql, null);
 
         if (cursor.moveToFirst()) {
             do {
                 Employee e = new Employee();
-                e.setIdNv(cursor.getInt(cursor.getColumnIndexOrThrow("id_nv")));
-                e.setMaNv(cursor.getString(cursor.getColumnIndexOrThrow("ma_nv")));
-                e.setHoTen(cursor.getString(cursor.getColumnIndexOrThrow("ho_ten")));
-                e.setNgaySinh(cursor.getString(cursor.getColumnIndexOrThrow("ngay_sinh")));
-                e.setGioiTinh(cursor.getString(cursor.getColumnIndexOrThrow("gioi_tinh")));
-                e.setSoDt(cursor.getString(cursor.getColumnIndexOrThrow("so_dt")));
-                e.setEmail(cursor.getString(cursor.getColumnIndexOrThrow("email")));
-                e.setIdPhongBan(cursor.getInt(cursor.getColumnIndexOrThrow("id_phong_ban_fk")));
-                e.setChucVu(cursor.getString(cursor.getColumnIndexOrThrow("chuc_vu")));
-                e.setNgayVaoLam(cursor.getString(cursor.getColumnIndexOrThrow("ngay_vao_lam")));
-                e.setHeSoLuong(cursor.getDouble(cursor.getColumnIndexOrThrow("he_so_luong")));
-                e.setTrangThai(cursor.getInt(cursor.getColumnIndexOrThrow("trang_thai")));
-                e.setTenPhongBan(cursor.getString(cursor.getColumnIndexOrThrow("ten_phong")));
-                e.setAvatar(cursor.getString(cursor.getColumnIndexOrThrow("avatar")));
+                e.setIdNv(cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.COL_ID_NV)));
+                e.setMaNv(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_MA_NV)));
+                e.setHoTen(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_HO_TEN)));
+                e.setNgaySinh(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_NGAY_SINH)));
+                e.setGioiTinh(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_GIOI_TINH)));
+                e.setSoDt(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_SDT)));
+                e.setEmail(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_EMAIL)));
+                e.setIdPhongBan(cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.COL_ID_PB_FK)));
+                e.setChucVu(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_CHUC_VU)));
+                e.setNgayVaoLam(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_NGAY_VAO_LAM)));
+                e.setHeSoLuong(cursor.getDouble(cursor.getColumnIndexOrThrow(DBHelper.COL_HE_SO_LUONG)));
+                e.setTrangThai(cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.COL_TRANG_THAI)));
+                e.setTenPhongBan(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_TEN_PB)));
+                e.setAvatar(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_AVATAR)));
                 list.add(e);
             } while (cursor.moveToNext());
         }
@@ -80,7 +80,7 @@ public class EmployeeDAO {
 
     public boolean isEmployeeCodeExists(String maNv) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM NhanVien WHERE ma_nv = ?", new String[]{maNv});
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DBHelper.TABLE_NHANVIEN + " WHERE " + DBHelper.COL_MA_NV + " = ?", new String[]{maNv});
         boolean exists = cursor.getCount() > 0;
         cursor.close();
         db.close();
@@ -94,20 +94,20 @@ public class EmployeeDAO {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("ma_nv", e.getMaNv());
-        values.put("ho_ten", e.getHoTen());
-        values.put("ngay_sinh", e.getNgaySinh());
-        values.put("gioi_tinh", e.getGioiTinh());
-        values.put("so_dt", e.getSoDt());
-        values.put("email", e.getEmail());
-        values.put("id_phong_ban_fk", e.getIdPhongBan());
-        values.put("chuc_vu", e.getChucVu());
-        values.put("ngay_vao_lam", e.getNgayVaoLam());
-        values.put("he_so_luong", e.getHeSoLuong());
-        values.put("avatar", e.getAvatar());
-        values.put("trang_thai", e.getTrangThai());
+        values.put(DBHelper.COL_MA_NV, e.getMaNv());
+        values.put(DBHelper.COL_HO_TEN, e.getHoTen());
+        values.put(DBHelper.COL_NGAY_SINH, e.getNgaySinh());
+        values.put(DBHelper.COL_GIOI_TINH, e.getGioiTinh());
+        values.put(DBHelper.COL_SDT, e.getSoDt());
+        values.put(DBHelper.COL_EMAIL, e.getEmail());
+        values.put(DBHelper.COL_ID_PB_FK, e.getIdPhongBan());
+        values.put(DBHelper.COL_CHUC_VU, e.getChucVu());
+        values.put(DBHelper.COL_NGAY_VAO_LAM, e.getNgayVaoLam());
+        values.put(DBHelper.COL_HE_SO_LUONG, e.getHeSoLuong());
+        values.put(DBHelper.COL_AVATAR, e.getAvatar());
+        values.put(DBHelper.COL_TRANG_THAI, e.getTrangThai());
 
-        long result = db.insert("NhanVien", null, values);
+        long result = db.insert(DBHelper.TABLE_NHANVIEN, null, values);
         db.close();
         return result != -1;
     }
@@ -115,22 +115,22 @@ public class EmployeeDAO {
     public boolean updateEmployee(Employee e) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("ho_ten", e.getHoTen());
-        values.put("ngay_sinh", e.getNgaySinh());
-        values.put("gioi_tinh", e.getGioiTinh());
-        values.put("so_dt", e.getSoDt());
-        values.put("email", e.getEmail());
-        values.put("id_phong_ban_fk", e.getIdPhongBan());
-        values.put("chuc_vu", e.getChucVu());
-        values.put("ngay_vao_lam", e.getNgayVaoLam());
-        values.put("he_so_luong", e.getHeSoLuong());
-        values.put("avatar", e.getAvatar());
-        values.put("trang_thai", e.getTrangThai());
+        values.put(DBHelper.COL_HO_TEN, e.getHoTen());
+        values.put(DBHelper.COL_NGAY_SINH, e.getNgaySinh());
+        values.put(DBHelper.COL_GIOI_TINH, e.getGioiTinh());
+        values.put(DBHelper.COL_SDT, e.getSoDt());
+        values.put(DBHelper.COL_EMAIL, e.getEmail());
+        values.put(DBHelper.COL_ID_PB_FK, e.getIdPhongBan());
+        values.put(DBHelper.COL_CHUC_VU, e.getChucVu());
+        values.put(DBHelper.COL_NGAY_VAO_LAM, e.getNgayVaoLam());
+        values.put(DBHelper.COL_HE_SO_LUONG, e.getHeSoLuong());
+        values.put(DBHelper.COL_AVATAR, e.getAvatar());
+        values.put(DBHelper.COL_TRANG_THAI, e.getTrangThai());
 
         int result = db.update(
-                "NhanVien",
+                DBHelper.TABLE_NHANVIEN,
                 values,
-                "id_nv = ?",
+                DBHelper.COL_ID_NV + " = ?",
                 new String[]{String.valueOf(e.getIdNv())}
         );
 
@@ -140,14 +140,14 @@ public class EmployeeDAO {
 
     public boolean deleteEmployee(int idNv) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        int result = db.delete("NhanVien", "id_nv = ?", new String[]{String.valueOf(idNv)});
+        int result = db.delete(DBHelper.TABLE_NHANVIEN, DBHelper.COL_ID_NV + " = ?", new String[]{String.valueOf(idNv)});
         db.close();
         return result > 0;
     }
 
     public int getEmployeeCountFromDB() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM NhanVien", null);
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + DBHelper.TABLE_NHANVIEN, null);
         int count = 0;
         if (cursor.moveToFirst()) {
             count = cursor.getInt(0);
