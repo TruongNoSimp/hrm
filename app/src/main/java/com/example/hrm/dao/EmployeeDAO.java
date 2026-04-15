@@ -169,4 +169,23 @@ public class EmployeeDAO {
             }
         }
     }
+
+    public int getAttendanceCountToday() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(new java.util.Date());
+            cursor = db.rawQuery("SELECT COUNT(*) FROM " + DBHelper.TABLE_CHUYENCAN +
+                    " WHERE " + DBHelper.COL_NGAY_CC + " = ?", new String[]{today});
+            int count = 0;
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            return count;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
 }

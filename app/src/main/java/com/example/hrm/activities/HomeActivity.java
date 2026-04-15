@@ -32,7 +32,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private TextView tvTotalDepartments;
     private TextView tvTotalEmployees;
     private TextView tvPresentToday;
-    private TextView tvLeaveToday;
 
     private TextView tvAccountName;
     private TextView tvAccountRole;
@@ -42,12 +41,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private CardView cardDepartments;
     private CardView cardEmployees;
     private CardView cardPresent;
-    private CardView cardLeave;
 
     private LinearLayout menuDepartment;
     private LinearLayout menuEmployee;
     private LinearLayout menuAttendance;
-    private LinearLayout menuLeave;
+    private LinearLayout menuSalary;
     private LinearLayout menuReward;
     private LinearLayout menuDiscipline;
 
@@ -71,7 +69,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         tvTotalDepartments = findViewById(R.id.tvTotalDepartments);
         tvTotalEmployees = findViewById(R.id.tvTotalEmployees);
         tvPresentToday = findViewById(R.id.tvPresentToday);
-        tvLeaveToday = findViewById(R.id.tvLeaveToday);
 
         tvAccountName = findViewById(R.id.tvAccountName);
         tvAccountRole = findViewById(R.id.tvAccountRole);
@@ -81,12 +78,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         cardDepartments = findViewById(R.id.cardDepartments);
         cardEmployees = findViewById(R.id.cardEmployees);
         cardPresent = findViewById(R.id.cardPresent);
-        cardLeave = findViewById(R.id.cardLeave);
 
         menuDepartment = findViewById(R.id.menuDepartment);
         menuEmployee = findViewById(R.id.menuEmployee);
         menuAttendance = findViewById(R.id.menuAttendance);
-        menuLeave = findViewById(R.id.menuLeave);
+        menuSalary = findViewById(R.id.menuSalary);
         menuReward = findViewById(R.id.menuReward);
         menuDiscipline = findViewById(R.id.menuDiscipline);
     }
@@ -127,13 +123,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         try {
             int totalDepartments = getDepartmentCountFromDB();
             int totalEmployees = getEmployeeCountFromDB();
-            int presentToday = 0;
-            int leaveToday = 0;
+            int presentToday = getAttendanceCountToday();
 
             tvTotalDepartments.setText(String.valueOf(totalDepartments));
             tvTotalEmployees.setText(String.valueOf(totalEmployees));
             tvPresentToday.setText(String.valueOf(presentToday));
-            tvLeaveToday.setText(String.valueOf(leaveToday));
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(this, "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -160,17 +154,26 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    private int getAttendanceCountToday() {
+        try {
+            EmployeeDAO employeeDAO = new EmployeeDAO(this);
+            return employeeDAO.getAttendanceCountToday();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
     private void setupClickEvents() {
         try {
             if (cardDepartments != null) cardDepartments.setOnClickListener(v -> openDepartment());
             if (cardEmployees != null) cardEmployees.setOnClickListener(v -> openEmployee());
             if (cardPresent != null) cardPresent.setOnClickListener(v -> openAttendance());
-            if (cardLeave != null) cardLeave.setOnClickListener(v -> openLeave());
 
             if (menuDepartment != null) menuDepartment.setOnClickListener(v -> openDepartment());
             if (menuEmployee != null) menuEmployee.setOnClickListener(v -> openEmployee());
             if (menuAttendance != null) menuAttendance.setOnClickListener(v -> openAttendance());
-            if (menuLeave != null) menuLeave.setOnClickListener(v -> openLeave());
+            if (menuSalary != null) menuSalary.setOnClickListener(v -> openSalary());
             if (menuReward != null) menuReward.setOnClickListener(v -> openReward());
             if (menuDiscipline != null) menuDiscipline.setOnClickListener(v -> openDiscipline());
         } catch (Exception e) {
@@ -191,8 +194,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         startActivity(new Intent(HomeActivity.this, AttendanceActivity.class));
     }
 
-    private void openLeave() {
-        Toast.makeText(this, "Chức năng đang phát triển", Toast.LENGTH_SHORT).show();
+    private void openSalary() {
+        startActivity(new Intent(HomeActivity.this, SalaryActivity.class));
     }
 
     private void openReward() {
@@ -223,8 +226,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_attendance) {
             openAttendance();
 
-        } else if (id == R.id.nav_leave) {
-            openLeave();
+        } else if (id == R.id.nav_salary) {
+            openSalary();
 
         } else if (id == R.id.nav_reward) {
             openReward();

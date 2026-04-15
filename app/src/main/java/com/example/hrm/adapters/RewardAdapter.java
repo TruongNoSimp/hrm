@@ -40,7 +40,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.KhenThuong
         Reward reward = rewardList.get(position);
 
         holder.tvTenNhanVien.setText(reward.getTenNhanVien());
-        holder.tvMaNhanVien.setText("Mã NV: " + reward.getMaNhanVien());
+        holder.tvMaNhanVien.setText(reward.getMaNhanVien());
         holder.tvNgayQuyetDinh.setText(reward.getNgayQuyetDinh());
         holder.tvHinhThuc.setText(reward.getHinhThuc());
         holder.tvSoTienThuong.setText("+" + decimalFormat.format(reward.getSoTienThuong()) + " VNĐ");

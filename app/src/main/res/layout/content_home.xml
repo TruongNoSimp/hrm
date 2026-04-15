@@ -16,11 +16,11 @@
             android:id="@+id/tvTitleHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="Tổng quan hệ thống"
-            android:textSize="22sp"
-            android:textStyle="bold"
             android:textColor="?android:attr/textColorPrimary"
-            android:layout_marginTop="8dp" />
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -41,8 +41,8 @@
                 android:id="@+id/cardDepartments"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
-                android:layout_weight="1"
                 android:layout_marginEnd="6dp"
+                android:layout_weight="1"
                 app:cardBackgroundColor="?attr/colorSurface"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp">
@@ -85,8 +85,8 @@
                 android:id="@+id/cardEmployees"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
-                android:layout_weight="1"
                 android:layout_marginStart="6dp"
+                android:layout_weight="1"
                 app:cardBackgroundColor="?attr/colorSurface"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp">
@@ -137,8 +137,8 @@
                 android:id="@+id/cardPresent"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
-                android:layout_weight="1"
                 android:layout_marginEnd="6dp"
+                android:layout_weight="1"
                 app:cardBackgroundColor="?attr/colorSurface"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp">
@@ -176,50 +176,6 @@
                         android:textSize="12sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardLeave"
-                android:layout_width="0dp"
-                android:layout_height="120dp"
-                android:layout_weight="1"
-                android:layout_marginStart="6dp"
-                app:cardBackgroundColor="?attr/colorSurface"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Nghỉ phép hôm nay"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvLeaveToday"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="0"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="28sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Theo dõi nghỉ phép"
-                        android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="12sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
         </LinearLayout>
 
         <TextView
@@ -227,9 +183,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Chức năng chính"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="?android:attr/textColorPrimary" />
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -246,18 +202,26 @@
                 <LinearLayout
                     android:id="@+id/menuDepartment"
                     android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_weight="1"
+                    android:layout_height="90dp"
                     android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
                     android:background="?attr/colorSurface"
                     android:elevation="2dp"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="12dp">
+                    android:padding="8dp">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:contentDescription="Phòng ban"
+                        android:src="@drawable/ic_department"
+                        app:tint="?android:attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:text="Phòng ban"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="14sp"
@@ -267,14 +231,21 @@
                 <LinearLayout
                     android:id="@+id/menuEmployee"
                     android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_weight="1"
+                    android:layout_height="90dp"
                     android:layout_marginStart="6dp"
+                    android:layout_weight="1"
                     android:background="?attr/colorSurface"
                     android:elevation="2dp"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="12dp">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:contentDescription="Nhân viên"
+                        android:src="@drawable/ic_staff"
+                        app:tint="?android:attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -296,40 +267,54 @@
                 <LinearLayout
                     android:id="@+id/menuAttendance"
                     android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_weight="1"
+                    android:layout_height="90dp"
                     android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
                     android:background="?attr/colorSurface"
                     android:elevation="2dp"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="12dp">
 
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:contentDescription="Chuyên cần"
+                        android:src="@drawable/ic_attendance"
+                        app:tint="?android:attr/colorPrimary" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Chấm công"
+                        android:text="Chuyên cần"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/menuLeave"
+                    android:id="@+id/menuSalary"
                     android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_weight="1"
+                    android:layout_height="90dp"
                     android:layout_marginStart="6dp"
+                    android:layout_weight="1"
                     android:background="?attr/colorSurface"
                     android:elevation="2dp"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="12dp">
 
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:contentDescription="Tiền lương"
+                        android:src="@drawable/ic_salary"
+                        app:tint="?android:attr/colorPrimary" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nghỉ phép"
+                        android:text="Tiền lương"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -346,14 +331,21 @@
                 <LinearLayout
                     android:id="@+id/menuReward"
                     android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_weight="1"
+                    android:layout_height="90dp"
                     android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
                     android:background="?attr/colorSurface"
                     android:elevation="2dp"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="12dp">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_reward"
+                        android:contentDescription="Khen thưởng"
+                        app:tint="?android:attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -367,14 +359,21 @@
                 <LinearLayout
                     android:id="@+id/menuDiscipline"
                     android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_weight="1"
+                    android:layout_height="90dp"
                     android:layout_marginStart="6dp"
+                    android:layout_weight="1"
                     android:background="?attr/colorSurface"
                     android:elevation="2dp"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="12dp">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_discipline"
+                        android:contentDescription="Kỷ luật"
+                        app:tint="?android:attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"

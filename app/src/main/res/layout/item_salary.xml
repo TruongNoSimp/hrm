@@ -23,7 +23,7 @@
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="17sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/tvSoTienPhat"
+            app:layout_constraintEnd_toStartOf="@+id/tvTongLuong"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Nguyễn Văn A" />
@@ -41,63 +41,70 @@
             tools:text="Mã NV: NV001" />
 
         <TextView
-            android:id="@+id/tvHinhThuc"
-            android:layout_width="0dp"
+            android:id="@+id/tvThangNam"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="13sp"
-            app:layout_constraintEnd_toStartOf="@+id/tvSoTienPhat"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvMaNhanVien"
-            tools:text="Hình thức: Phạt hành chính" />
+            tools:text="Kỳ lương: 04/2026" />
 
         <TextView
-            android:id="@+id/tvSoTienPhat"
+            android:id="@+id/tvNgayCong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#EF4444"
+            android:layout_marginTop="2dp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTongLuong"
+            tools:text="Công: 26" />
+
+        <TextView
+            android:id="@+id/tvTongLuong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorPrimary"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="-200,000đ" />
+            tools:text="8,500,000đ" />
 
         <View
             android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:background="?attr/colorSurfaceVariant"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvHinhThuc" />
+            app:layout_constraintTop_toBottomOf="@id/tvThangNam" />
 
         <TextView
-            android:id="@+id/tvNgayQuyetDinh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="13sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider"
-            tools:text="Ngày: 16/04/2026" />
-
-        <TextView
-            android:id="@+id/tvLyDo"
+            android:id="@+id/tvThuong"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="13sp"
-            android:textStyle="italic"
-            app:layout_constraintEnd_toStartOf="@+id/layoutActions"
+            android:layout_marginTop="8dp"
+            android:textColor="#4CAF50"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/tvPhat"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvNgayQuyetDinh"
-            tools:text="Lý do: Đi làm muộn quá nhiều lần" />
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            tools:text="Thưởng: 500k" />
+
+        <TextView
+            android:id="@+id/tvPhat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="#F44336"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/layoutActions"
+            app:layout_constraintStart_toEndOf="@id/tvThuong"
+            app:layout_constraintTop_toTopOf="@id/tvThuong"
+            tools:text="Phạt: 100k" />
 
         <LinearLayout
             android:id="@+id/layoutActions"
@@ -110,7 +117,7 @@
             app:layout_constraintVertical_bias="1.0">
 
             <ImageView
-                android:id="@+id/imgEdit"
+                android:id="@+id/imgEditSalary"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:padding="6dp"
@@ -118,13 +125,13 @@
                 app:tint="?attr/colorPrimary" />
 
             <ImageView
-                android:id="@+id/imgDelete"
+                android:id="@+id/imgDeleteSalary"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
                 android:padding="6dp"
                 android:src="@android:drawable/ic_menu_delete"
-                app:tint="#EF4444" />
+                app:tint="#F44336" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

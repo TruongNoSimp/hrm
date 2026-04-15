@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "hrm.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     //PhongBan
     public static final String TABLE_PHONGBAN = "PhongBan";
@@ -61,6 +61,17 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COL_ID_USER = "id_user";
     public static final String COL_USERNAME = "username";
     public static final String COL_PASSWORD = "password";
+
+    //Luong (Salary)
+    public static final String TABLE_LUONG = "Luong";
+    public static final String COL_ID_LUONG = "id_luong";
+    public static final String COL_THANG_NAM = "thang_nam";
+    public static final String COL_SO_NGAY_CONG = "so_ngay_cong";
+    public static final String COL_PHU_CAP = "phu_cap";
+    public static final String COL_KHAU_TRU = "khau_tru";
+    public static final String COL_TONG_THUONG = "tong_thuong";
+    public static final String COL_TONG_PHAT = "tong_phat";
+    public static final String COL_TONG_LUONG = "tong_luong";
 
     private static final String[][] PHONG_BAN_SEED = {
             {"PB01", "Nhân sự", "Quản lý hồ sơ và tuyển dụng"},
@@ -156,6 +167,22 @@ public class DBHelper extends SQLiteOpenHelper {
                     + "ON DELETE CASCADE)";
             db.execSQL(createKT);
 
+            // Tạo bảng Lương
+            String createLuong = "CREATE TABLE " + TABLE_LUONG + " ("
+                    + COL_ID_LUONG + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + COL_ID_NV + " INTEGER NOT NULL, "
+                    + COL_THANG_NAM + " TEXT NOT NULL, "
+                    + COL_SO_NGAY_CONG + " INTEGER DEFAULT 0, "
+                    + COL_PHU_CAP + " REAL DEFAULT 0, "
+                    + COL_KHAU_TRU + " REAL DEFAULT 0, "
+                    + COL_TONG_THUONG + " REAL DEFAULT 0, "
+                    + COL_TONG_PHAT + " REAL DEFAULT 0, "
+                    + COL_TONG_LUONG + " REAL DEFAULT 0, "
+                    + "UNIQUE(" + COL_ID_NV + ", " + COL_THANG_NAM + "), "
+                    + "FOREIGN KEY(" + COL_ID_NV + ") REFERENCES " + TABLE_NHANVIEN + "(" + COL_ID_NV + ") "
+                    + "ON DELETE CASCADE)";
+            db.execSQL(createLuong);
+
             // Tạo bảng Tài Khoản
             String createTK = "CREATE TABLE " + TABLE_TAIKHOAN + " ("
                     + COL_ID_USER + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -199,6 +226,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_KYLUAT);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_KHENTHUONG);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_LUONG);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHUYENCAN);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_NHANVIEN);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_PHONGBAN);

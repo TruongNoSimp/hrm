@@ -25,7 +25,9 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?android:attr/windowBackground"> <include layout="@layout/content_home" />
+            android:background="?android:attr/windowBackground">
+
+            <include layout="@layout/content_home" />
         </FrameLayout>
     </LinearLayout>
 

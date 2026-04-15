@@ -1,8 +1,10 @@
 package com.example.hrm.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -82,15 +84,22 @@ public class SettingActivity extends AppCompatActivity {
         swDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isInternalChange) return;
 
+            // 1. Lưu preference trước
             prefs.edit().putBoolean("isDarkMode", isChecked).apply();
 
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            }
+            // 2. Hiện Dialog chờ
+            ProgressDialog dialog = new ProgressDialog(this);
+            dialog.setMessage("Đang thay đổi giao diện...");
+            dialog.setCancelable(false);
+            dialog.show();
 
-            Toast.makeText(this, isChecked ? "Đã sang chế độ cày đêm!" : "Đã về chế độ ban ngày!", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(() -> {
+                if (isChecked) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                }
+            }, 500);
         });
 
         // 2. Sao lưu dữ liệu (G gọi hàm tao cho lúc nãy)

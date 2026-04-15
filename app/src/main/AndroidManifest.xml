@@ -45,6 +45,9 @@
         <activity
             android:name=".activities.DisciplineActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.SalaryActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
