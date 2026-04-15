@@ -103,12 +103,52 @@
             android:clickable="true"
             android:drawableEnd="@android:drawable/ic_menu_my_calendar" />
 
-        <TextView android:text="Hệ số lương" style="@style/LabelStyle" />
-        <EditText
-            android:id="@+id/edtHeSoLuong"
-            style="@style/InputStyle"
-            android:hint="Ví dụ: 2.34"
-            android:inputType="numberDecimal" />
+        <TextView
+            android:text="Hệ số lương"
+            style="@style/LabelStyle" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/edtHeSoLuong"
+                style="@style/InputStyle"
+                android:layout_width="match_parent"
+                android:hint="Ví dụ: 2.34"
+                android:inputType="numberDecimal"
+                android:paddingEnd="45dp"
+                android:text="1.0" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignTop="@id/edtHeSoLuong"
+                android:layout_alignBottom="@id/edtHeSoLuong"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/btnPlusHeSo"
+                    android:layout_width="24dp"
+                    android:layout_height="20dp"
+                    android:src="@android:drawable/arrow_up_float"
+                    android:background="?attr/selectableItemBackground"
+                    android:contentDescription="Tăng"
+                    app:tint="#1A73E8" />
+
+                <ImageView
+                    android:id="@+id/btnMinusHeSo"
+                    android:layout_width="24dp"
+                    android:layout_height="20dp"
+                    android:src="@android:drawable/arrow_down_float"
+                    android:background="?attr/selectableItemBackground"
+                    android:contentDescription="Giảm"
+                    app:tint="#D32F2F" />
+            </LinearLayout>
+        </RelativeLayout>
 
         <TextView android:text="Trạng thái" style="@style/LabelStyle" />
         <FrameLayout style="@style/InputStyle" android:layout_marginBottom="24dp">

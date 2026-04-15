@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hrm.R;
 import com.example.hrm.adapters.SalaryAdapter;
 import com.example.hrm.dao.SalaryDAO;
+import com.example.hrm.dto.SalaryDTO;
 import com.example.hrm.listeners.OnItemActionListener;
 import com.example.hrm.models.Salary;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -37,8 +37,8 @@ public class SalaryActivity extends AppCompatActivity {
     private EditText edtSearchSalary;
 
     private SalaryDAO salaryDAO;
-    private List<Salary> salaryList;
-    private List<Salary> originalList;
+    private List<SalaryDTO> salaryList;
+    private List<SalaryDTO> originalList;
     private SalaryAdapter salaryAdapter;
 
     @Override
@@ -47,295 +47,178 @@ public class SalaryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_salary);
 
         initViews();
-        initData();
+        salaryDAO = new SalaryDAO(this);
+
+        setupRecyclerView();
         loadSalaries();
-        initSearch();
-        setupToolbar();
+        setupSearch();
+
+        fabAddSalary.setOnClickListener(v -> showSalaryDialog(null));
     }
 
     private void initViews() {
         recyclerViewSalary = findViewById(R.id.recyclerViewSalary);
         fabAddSalary = findViewById(R.id.fabAddSalary);
         edtSearchSalary = findViewById(R.id.edtSearchSalary);
+        findViewById(R.id.toolbarSalary).setOnClickListener(v -> finish());
     }
 
-    private void initData() {
-        salaryDAO = new SalaryDAO(this);
+    private void setupRecyclerView() {
         salaryList = new ArrayList<>();
-        originalList = new ArrayList<>();
-
-        recyclerViewSalary.setLayoutManager(new LinearLayoutManager(this));
-
-        salaryAdapter = new SalaryAdapter(salaryList, new OnItemActionListener<Salary>() {
+        salaryAdapter = new SalaryAdapter(salaryList, new OnItemActionListener<SalaryDTO>() {
             @Override
-            public void onEdit(Salary salary) {
-                showSalaryDialog(salary, true);
+            public void onItemClick(SalaryDTO item) {}
+
+            @Override
+            public void onEdit(SalaryDTO item) {
+                showSalaryDialog(item);
             }
 
             @Override
-            public void onDelete(Salary salary) {
-                confirmDeleteSalary(salary);
-            }
-
-            @Override
-            public void onItemClick(Salary salary) {
-                // chưa dùng thì để trống
+            public void onDelete(SalaryDTO item) {
+                confirmDeleteSalary(item);
             }
         });
-
+        recyclerViewSalary.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewSalary.setAdapter(salaryAdapter);
-
-        fabAddSalary.setOnClickListener(v -> showSalaryDialog(null, false));
     }
 
     private void loadSalaries() {
-        salaryList.clear();
-        originalList.clear();
-
-        List<Salary> data = salaryDAO.getAllSalaries();
-        salaryList.addAll(data);
-        originalList.addAll(data);
-
-        salaryAdapter.notifyDataSetChanged();
+        salaryList = salaryDAO.getAllSalariesDTO();
+        originalList = new ArrayList<>(salaryList);
+        salaryAdapter.updateList(salaryList);
     }
 
-    private void initSearch() {
+    private void setupSearch() {
         edtSearchSalary.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterSalaries(s.toString());
+                filter(s.toString());
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
-    private void setupToolbar() {
-        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbarSalary);
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v -> finish());
-    }
-
-    private void filterSalaries(String keyword) {
-        salaryList.clear();
-
-        if (keyword.isEmpty()) {
-            salaryList.addAll(originalList);
-        } else {
-            String lowerKeyword = keyword.toLowerCase(Locale.getDefault());
-
-            for (Salary salary : originalList) {
-                String hoTen = salary.getHoTen() != null ? salary.getHoTen().toLowerCase(Locale.getDefault()) : "";
-                String maNv = salary.getMaNv() != null ? salary.getMaNv().toLowerCase(Locale.getDefault()) : "";
-                String thangNam = salary.getThangNam() != null ? salary.getThangNam().toLowerCase(Locale.getDefault()) : "";
-
-                if (hoTen.contains(lowerKeyword)
-                        || maNv.contains(lowerKeyword)
-                        || thangNam.contains(lowerKeyword)) {
-                    salaryList.add(salary);
-                }
+    private void filter(String text) {
+        List<SalaryDTO> filteredList = new ArrayList<>();
+        for (SalaryDTO item : originalList) {
+            if (item.getNhanVienDisplay().toLowerCase().contains(text.toLowerCase()) ||
+                    item.getThangNam().contains(text)) {
+                filteredList.add(item);
             }
         }
-
-        salaryAdapter.notifyDataSetChanged();
+        salaryAdapter.updateList(filteredList);
     }
 
-    private void showSalaryDialog(Salary salary, boolean isEdit) {
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_salary, null);
-        AlertDialog dialog = createSalaryDialog(view);
-
-        Spinner spNhanVien = view.findViewById(R.id.spNhanVien);
-        EditText edtThangNam = view.findViewById(R.id.edtThangNam);
-        EditText edtPhuCap = view.findViewById(R.id.edtPhuCap);
-        EditText edtKhauTru = view.findViewById(R.id.edtKhauTru);
-        Button btnSave = view.findViewById(R.id.btnSaveSalary);
-        Button btnClose = view.findViewById(R.id.btnCloseSalaryDialog);
-
-        setupEmployeeSpinner(spNhanVien);
-        setupMonthPicker(edtThangNam);
-        bindSalaryData(salary, isEdit, spNhanVien, edtThangNam, edtPhuCap, edtKhauTru);
-        setupCloseButton(dialog, btnClose);
-        setupSaveButton(dialog, salary, isEdit, spNhanVien, edtThangNam, edtPhuCap, edtKhauTru, btnSave);
-    }
-
-    private AlertDialog createSalaryDialog(View view) {
+    private void showSalaryDialog(SalaryDTO dto) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_salary, null);
         builder.setView(view);
+
+        DialogViewHolder holder = new DialogViewHolder(view);
         AlertDialog dialog = builder.create();
-        dialog.show();
-        return dialog;
-    }
 
-    private void bindSalaryData(Salary salary, boolean isEdit,
-                                Spinner spNhanVien,
-                                EditText edtThangNam,
-                                EditText edtPhuCap,
-                                EditText edtKhauTru) {
-        if (isEdit && salary != null) {
-            edtThangNam.setText(salary.getThangNam());
-            edtPhuCap.setText(String.valueOf(salary.getPhuCap()));
-            edtKhauTru.setText(String.valueOf(salary.getKhauTru()));
+        setupEmployeeSpinner(holder.spNhanVien);
+        holder.edtThangNam.setOnClickListener(v -> showMonthPicker(holder.edtThangNam));
 
-            setSpinnerToCurrentEmployee(spNhanVien, salary.getIdNv());
-
-            spNhanVien.setEnabled(false);
-            edtThangNam.setEnabled(false);
+        if (dto != null) {
+            bindDtoToDialog(holder, dto);
         }
+
+        holder.btnClose.setOnClickListener(v -> dialog.dismiss());
+        holder.btnSave.setOnClickListener(v -> handleSaveSalary(holder, dto, dialog));
+
+        dialog.show();
     }
 
-    private void setSpinnerToCurrentEmployee(Spinner spNhanVien, int idNv) {
-        for (int i = 0; i < spNhanVien.getCount(); i++) {
-            String item = spNhanVien.getItemAtPosition(i).toString();
-            if (item.startsWith(idNv + " - ")) {
-                spNhanVien.setSelection(i);
+    private void bindDtoToDialog(DialogViewHolder holder, SalaryDTO dto) {
+        holder.edtThangNam.setText(dto.getThangNam());
+        holder.edtPhuCap.setText(String.valueOf(dto.getPhuCapRaw()));
+        holder.edtKhauTru.setText(String.valueOf(dto.getKhauTruRaw()));
+
+        ArrayAdapter adapter = (ArrayAdapter) holder.spNhanVien.getAdapter();
+        for (int i = 0; i < adapter.getCount(); i++) {
+            if (adapter.getItem(i).toString().contains(dto.getMaNv())) {
+                holder.spNhanVien.setSelection(i);
                 break;
             }
         }
+        holder.btnSave.setText("Cập nhật");
     }
 
-    private void setupCloseButton(AlertDialog dialog, Button btnClose) {
-        btnClose.setOnClickListener(v -> dialog.dismiss());
-    }
+    private void handleSaveSalary(DialogViewHolder holder, SalaryDTO originalDto, AlertDialog dialog) {
+        int idNv = salaryDAO.extractEmployeeId(holder.spNhanVien.getSelectedItem().toString());
+        String thangNam = holder.edtThangNam.getText().toString();
 
-    private void setupSaveButton(AlertDialog dialog,
-                                 Salary salary,
-                                 boolean isEdit,
-                                 Spinner spNhanVien,
-                                 EditText edtThangNam,
-                                 EditText edtPhuCap,
-                                 EditText edtKhauTru,
-                                 Button btnSave) {
-        btnSave.setOnClickListener(v -> {
-            String selectedEmployee = spNhanVien.getSelectedItem() != null
-                    ? spNhanVien.getSelectedItem().toString().trim()
-                    : "";
-
-            int idNv = salaryDAO.extractEmployeeId(selectedEmployee);
-            String thangNam = edtThangNam.getText().toString().trim();
-            double phuCap = parseDouble(edtPhuCap);
-            double khauTru = parseDouble(edtKhauTru);
-
-            if (!validateSalaryInput(idNv, thangNam, edtThangNam)) {
-                return;
-            }
-
-            if (isEdit && salary != null) {
-                updateSalary(dialog, salary, phuCap, khauTru);
-            } else {
-                insertSalary(dialog, idNv, thangNam, phuCap, khauTru);
-            }
-        });
-    }
-
-    private boolean validateSalaryInput(int idNv, String thangNam, EditText edtThangNam) {
-        if (idNv == -1) {
-            Toast.makeText(this, "Vui lòng chọn nhân viên hợp lệ", Toast.LENGTH_SHORT).show();
-            return false;
+        if (idNv == -1 || thangNam.isEmpty()) {
+            Toast.makeText(this, "Thiếu thông tin!", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        if (TextUtils.isEmpty(thangNam)) {
-            edtThangNam.setError("Không được để trống tháng/năm");
-            return false;
-        }
+        Salary s = new Salary();
+        if (originalDto != null) s.setIdLuong(originalDto.getIdLuong());
+        s.setIdNv(idNv);
+        s.setThangNam(thangNam);
+        s.setPhuCap(parseDouble(holder.edtPhuCap));
+        s.setKhauTru(parseDouble(holder.edtKhauTru));
 
-        return true;
-    }
-
-    private void updateSalary(AlertDialog dialog, Salary salary, double phuCap, double khauTru) {
-        salary.setPhuCap(phuCap);
-        salary.setKhauTru(khauTru);
-
-        boolean result = salaryDAO.updateSalary(salary);
-        if (result) {
-            Toast.makeText(this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+        if (salaryDAO.saveSalary(s, originalDto != null)) {
+            Toast.makeText(this, "Lưu thành công", Toast.LENGTH_SHORT).show();
             loadSalaries();
             dialog.dismiss();
         } else {
-            Toast.makeText(this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void insertSalary(AlertDialog dialog, int idNv, String thangNam, double phuCap, double khauTru) {
-        Salary newSalary = new Salary();
-        newSalary.setIdNv(idNv);
-        newSalary.setThangNam(thangNam);
-        newSalary.setPhuCap(phuCap);
-        newSalary.setKhauTru(khauTru);
-
-        boolean result = salaryDAO.insertSalary(newSalary);
-        if (result) {
-            Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
-            loadSalaries();
-            dialog.dismiss();
-        } else {
-            Toast.makeText(this, "Lương tháng này đã tồn tại", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Lương tháng này đã tồn tại!", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void setupEmployeeSpinner(Spinner spinner) {
-        List<String> employeeList = salaryDAO.getAllEmployeeDisplayList();
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                employeeList
-        );
+        List<String> nvList = salaryDAO.getAllEmployeeDisplayList();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, nvList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
     }
 
-    private void setupMonthPicker(EditText edtThangNam) {
-        edtThangNam.setOnClickListener(v -> showMonthPickerDialog(edtThangNam));
-    }
-
-    private void showMonthPickerDialog(EditText edtThangNam) {
+    private void showMonthPicker(EditText edt) {
         Calendar calendar = Calendar.getInstance();
-        int currentYear = calendar.get(Calendar.YEAR);
-        int currentMonth = calendar.get(Calendar.MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                this,
-                (view, year, month, dayOfMonth) -> {
-                    String thangNam = String.format(Locale.getDefault(), "%02d/%d", month + 1, year);
-                    edtThangNam.setText(thangNam);
-                },
-                currentYear,
-                currentMonth,
-                1
-        );
-
-        datePickerDialog.show();
+        new DatePickerDialog(this, (view, year, month, day) -> {
+            edt.setText(String.format(Locale.getDefault(), "%02d/%d", month + 1, year));
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), 1).show();
     }
 
     private double parseDouble(EditText edt) {
-        try {
-            return Double.parseDouble(edt.getText().toString().trim());
-        } catch (Exception e) {
-            return 0;
-        }
+        try { return Double.parseDouble(edt.getText().toString().trim()); } catch (Exception e) { return 0; }
     }
 
-    private void confirmDeleteSalary(Salary salary) {
+    private void confirmDeleteSalary(SalaryDTO dto) {
         new AlertDialog.Builder(this)
-                .setTitle("Xóa lương")
-                .setMessage("Bạn có chắc muốn xóa không?")
-                .setPositiveButton("Xóa", (dialog, which) -> {
-                    boolean result = salaryDAO.deleteSalary(salary.getIdLuong());
-
-                    if (result) {
-                        Toast.makeText(this, "Xóa thành công", Toast.LENGTH_SHORT).show();
+                .setTitle("Xóa bản ghi")
+                .setMessage("Xóa bảng lương của " + dto.getHoTen() + "?")
+                .setPositiveButton("Xóa", (d, w) -> {
+                    if (salaryDAO.deleteSalary(dto.getIdLuong())) {
                         loadSalaries();
-                    } else {
-                        Toast.makeText(this, "Không thể xóa", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Đã xóa", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Hủy", null)
-                .show();
+                .setNegativeButton("Hủy", null).show();
+    }
+
+    private static class DialogViewHolder {
+        Spinner spNhanVien;
+        EditText edtThangNam, edtPhuCap, edtKhauTru;
+        Button btnSave, btnClose;
+
+        DialogViewHolder(View view) {
+            spNhanVien = view.findViewById(R.id.spNhanVien);
+            edtThangNam = view.findViewById(R.id.edtThangNam);
+            edtPhuCap = view.findViewById(R.id.edtPhuCap);
+            edtKhauTru = view.findViewById(R.id.edtKhauTru);
+            btnSave = view.findViewById(R.id.btnSaveSalary);
+            btnClose = view.findViewById(R.id.btnCloseSalaryDialog);
+        }
     }
 }
