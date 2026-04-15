@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,7 +18,6 @@ import com.example.hrm.dao.AttendanceDAO;
 import com.example.hrm.dao.EmployeeDAO;
 import com.example.hrm.dto.EmployeeAttendanceDTO;
 import com.example.hrm.dto.AttendanceHistoryDTO;
-import com.example.hrm.models.Attendance;
 import com.example.hrm.models.Employee;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -39,6 +39,7 @@ public class AttendanceActivity extends AppCompatActivity {
     private List<EmployeeAttendanceDTO> originalList;
     private AttendanceAdapter adapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +48,7 @@ public class AttendanceActivity extends AppCompatActivity {
         initViews();
         initData();
         initActions();
+        setupToolbar();
     }
 
     private void initViews() {
@@ -87,6 +89,12 @@ public class AttendanceActivity extends AppCompatActivity {
         });
 
         fabHistory.setOnClickListener(v -> showAttendanceHistory());
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbarAttendance);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void handleCheckIn(Employee employee, String selectedTime) {

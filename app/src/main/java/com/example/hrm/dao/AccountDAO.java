@@ -31,7 +31,6 @@ public class AccountDAO {
             if (cursor != null) {
                 cursor.close();
             }
-            db.close();
         }
     }
 }

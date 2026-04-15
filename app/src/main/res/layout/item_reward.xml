@@ -1,96 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="4dp">
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="6dp"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/tvTenNhanVien"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Nguyễn Văn A"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tvSoTienThuong"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Nguyễn Văn A" />
 
         <TextView
             android:id="@+id/tvMaNhanVien"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Mã NV: NV01"
-            android:textColor="#222222"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/tvNgayQuyetDinh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Ngày quyết định: 2025-04-10"
-            android:textColor="#555555"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tvHinhThuc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Hình thức: Thưởng chuyên cần"
-            android:textColor="#555555"
-            android:textSize="14sp" />
+            android:textColor="?attr/colorPrimary"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTenNhanVien"
+            tools:text="NV01" />
 
         <TextView
             android:id="@+id/tvSoTienThuong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Số tiền thưởng: 500000"
-            android:textColor="#555555"
-            android:textSize="14sp" />
+            android:textColor="#10B981"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="+500,000" />
+
+        <TextView
+            android:id="@+id/tvNgayQuyetDinh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvSoTienThuong"
+            tools:text="2025-04-10" />
+
+        <TextView
+            android:id="@+id/tvHinhThuc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="14sp"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toStartOf="@+id/imgEdit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvMaNhanVien"
+            tools:text="Thưởng chuyên cần" />
 
         <TextView
             android:id="@+id/tvLyDo"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Lý do: Hoàn thành tốt công việc"
-            android:textColor="#555555"
-            android:textSize="14sp" />
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toStartOf="@+id/imgEdit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvHinhThuc"
+            tools:text="Lý do: Hoàn thành tốt công việc" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/imgEdit"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:padding="4dp"
+            android:src="@android:drawable/ic_menu_edit"
+            app:layout_constraintBottom_toTopOf="@+id/imgDelete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvNgayQuyetDinh"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:tint="?attr/colorPrimary" />
 
-            <ImageView
-                android:id="@+id/imgEdit"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:contentDescription="Sửa"
-                android:padding="2dp"
-                android:src="@android:drawable/ic_menu_edit" />
+        <ImageView
+            android:id="@+id/imgDelete"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="8dp"
+            android:padding="4dp"
+            android:src="@android:drawable/ic_menu_delete"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgEdit"
+            app:tint="#EF4444" />
 
-            <ImageView
-                android:id="@+id/imgDelete"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginStart="20dp"
-                android:contentDescription="Xóa"
-                android:padding="2dp"
-                android:src="@android:drawable/ic_menu_delete" />
-        </LinearLayout>
-
-    </LinearLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -109,7 +110,7 @@ public class DepartmentActivity extends AppCompatActivity {
         });
     }
     private void setupToolbar() {
-        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbarDepartment);
+        Toolbar toolbar = findViewById(R.id.toolbarDepartment);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
     }

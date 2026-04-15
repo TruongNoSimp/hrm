@@ -1,87 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="?android:attr/windowBackground"> <com.google.android.material.appbar.AppBarLayout
+    android:id="@+id/appBarKyLuat"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent">
 
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarKyLuat"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:title="Quản lý kỷ luật"
+        app:titleTextColor="?attr/colorOnPrimary"
+        app:navigationIcon="@drawable/ic_back"
+        app:navigationIconTint="?attr/colorOnPrimary" />
+</com.google.android.material.appbar.AppBarLayout>
 
-        <com.google.android.material.appbar.AppBarLayout
+    <androidx.cardview.widget.CardView
+        android:id="@+id/layoutSearchKyLuat"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        app:cardBackgroundColor="?attr/colorSurface"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBarKyLuat">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#1976D2"
-            android:fitsSystemWindows="true">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbarKyLuat"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="#1976D2"
-                app:title="Quản lý kỷ luật"
-                app:titleTextColor="@android:color/white"
-                app:navigationIcon="@drawable/ic_back"
-                app:navigationIconTint="@android:color/white" />
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:padding="12dp">
 
-            <LinearLayout
-                android:id="@+id/layoutSearchKyLuat"
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@android:drawable/ic_menu_search"
+                app:tint="?android:attr/textColorSecondary" />
+
+            <EditText
+                android:id="@+id/edtSearchKyLuat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="#FFFFFF"
-                android:elevation="2dp"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:layout_marginStart="8dp"
+                android:background="@android:color/transparent"
+                android:hint="Tìm theo tên hoặc mã nhân viên..."
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="8dp"
-                    android:src="@android:drawable/ic_menu_search" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewKyLuat"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutSearchKyLuat"
+        tools:listitem="@layout/item_discipline" />
 
-                <EditText
-                    android:id="@+id/edtSearchKyLuat"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:hint="Tìm theo tên hoặc mã nhân viên..."
-                    android:padding="6dp"
-                    android:textSize="15sp" />
-            </LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddKyLuat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="?attr/colorOnPrimary" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewKyLuat"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/layoutSearchKyLuat"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="16dp" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabAddKyLuat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="16dp"
-                android:contentDescription="Thêm kỷ luật"
-                android:src="@android:drawable/ic_input_add"
-                app:backgroundTint="#1976D2"
-                app:tint="#FFFFFF" />
-
-        </RelativeLayout>
-    </LinearLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

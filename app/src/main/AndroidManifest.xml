@@ -6,17 +6,14 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
         android:theme="@style/Theme.HRM">
 
         <activity
-            android:name=".activities.HomeActivity"
+            android:name=".activities.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,6 +21,9 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activities.HomeActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.DepartmentActivity"
             android:exported="false" />
@@ -38,6 +38,9 @@
             android:exported="false" />
         <activity
             android:name=".activities.RewardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SettingActivity"
             android:exported="false" />
         <activity
             android:name=".activities.DisciplineActivity"

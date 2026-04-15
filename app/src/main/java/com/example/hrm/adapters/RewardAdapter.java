@@ -41,9 +41,9 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.KhenThuong
 
         holder.tvTenNhanVien.setText(reward.getTenNhanVien());
         holder.tvMaNhanVien.setText("Mã NV: " + reward.getMaNhanVien());
-        holder.tvNgayQuyetDinh.setText("Ngày quyết định: " + reward.getNgayQuyetDinh());
-        holder.tvHinhThuc.setText("Hình thức: " + reward.getHinhThuc());
-        holder.tvSoTienThuong.setText("Số tiền thưởng: " + decimalFormat.format(reward.getSoTienThuong()) + " VNĐ");
+        holder.tvNgayQuyetDinh.setText(reward.getNgayQuyetDinh());
+        holder.tvHinhThuc.setText(reward.getHinhThuc());
+        holder.tvSoTienThuong.setText("+" + decimalFormat.format(reward.getSoTienThuong()) + " VNĐ");
         holder.tvLyDo.setText("Lý do: " + reward.getLyDo());
 
         holder.imgEdit.setOnClickListener(v -> {

@@ -42,9 +42,9 @@ public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.Ky
 
         holder.tvTenNhanVien.setText(discipline.getTenNhanVien());
         holder.tvMaNhanVien.setText("Mã NV: " + discipline.getMaNhanVien());
-        holder.tvNgayQuyetDinh.setText("Ngày quyết định: " + discipline.getNgayQuyetDinh());
-        holder.tvHinhThuc.setText("Hình thức: " + discipline.getHinhThuc());
-        holder.tvSoTienPhat.setText("Tiền phạt: " + decimalFormat.format(discipline.getSoTienPhat()) + " VNĐ");
+        holder.tvNgayQuyetDinh.setText(discipline.getNgayQuyetDinh());
+        holder.tvHinhThuc.setText(discipline.getHinhThuc());
+        holder.tvSoTienPhat.setText("- " + decimalFormat.format(discipline.getSoTienPhat()) + " VNĐ");
         holder.tvLyDo.setText("Lý do: " + discipline.getLyDo());
 
         holder.ivEdit.setOnClickListener(v -> {

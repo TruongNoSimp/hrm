@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="180dp"
-    android:background="#1976D2"
+    android:background="?attr/colorPrimary"
     android:gravity="bottom"
     android:orientation="vertical"
     android:padding="16dp">
@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Quản lý nhân sự"
-        android:textColor="@android:color/white"
+        android:textColor="?attr/colorOnPrimary"
         android:textSize="22sp"
         android:textStyle="bold" />
 
@@ -20,7 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="Ứng dụng HRM"
-        android:textColor="#E3F2FD"
+        android:textColor="?attr/colorOnPrimary"
+        android:alpha="0.8"
         android:textSize="14sp" />
 
 </LinearLayout>
