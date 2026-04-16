@@ -100,16 +100,26 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setupAccountFooter() {
-        tvAccountName.setText("truong");
-        tvAccountRole.setText("Quản trị viên");
+        SharedPreferences prefs = getSharedPreferences("SESSION", MODE_PRIVATE);
 
-        btnViewProfile.setOnClickListener(v -> Toast.makeText(this, "Mở thông tin tài khoản", Toast.LENGTH_SHORT).show());
+        //Lấy adminname và username. Nếu không thấy thì để mặc định là "Admin" và "admin"
+        String adminName = prefs.getString("adminname", "Người dùng");
+        String username = prefs.getString("username", "admin");
+
+        // 3. Set lên UI: Tên thật dòng to, Username dòng nhỏ (thêm @ cho nó giống mạng xã hội)
+        tvAccountName.setText(adminName);
+        tvAccountRole.setText("@" + username);
+
+        btnViewProfile.setOnClickListener(v ->
+                Toast.makeText(this, "Thông tin của " + adminName, Toast.LENGTH_SHORT).show()
+        );
 
         btnLogout.setOnClickListener(v -> {
-            SharedPreferences.Editor editor = getSharedPreferences("SESSION", MODE_PRIVATE).edit();
+            SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("isLogin", false);
             editor.putBoolean("remember", false);
             editor.putString("username", "");
+            editor.putString("adminname", "");
             editor.apply();
 
             Toast.makeText(this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();

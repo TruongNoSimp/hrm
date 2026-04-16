@@ -2,6 +2,7 @@ package com.example.hrm.adapters;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.example.hrm.R;
 import com.example.hrm.dto.EmployeeAttendanceDTO;
 import com.example.hrm.listeners.OnAttendanceClickListener;
 import com.example.hrm.models.Employee;
+import com.example.hrm.utils.DateUtils;
 
 import java.util.Calendar;
 import java.util.List;
@@ -59,8 +61,12 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.At
             holder.imgAvatar.setImageResource(R.drawable.ic_avatar_default);
         }
 
+        SharedPreferences prefs = context.getSharedPreferences("SESSION", Context.MODE_PRIVATE);
+        String workShift = prefs.getString("work_shift", "08:00") + ":00";
+
         if (dto.getGioVao() != null && !dto.getGioVao().isEmpty()) {
-            holder.tvStatus.setText("Vào lúc: " + dto.getGioVao());
+            String displayTime = DateUtils.formatDisplayTime(context, dto.getGioVao());
+            holder.tvStatus.setText("Vào lúc: " + displayTime);
             int color = dto.getTrangThaiChamCong() == 1 ? Color.GREEN : Color.RED;
             holder.tvStatus.setTextColor(color);
             holder.btnCheckIn.setVisibility(View.GONE);
@@ -73,13 +79,15 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.At
         holder.btnCheckIn.setOnClickListener(v -> {
             Calendar c = Calendar.getInstance();
             new TimePickerDialog(context, (view, hour, minute) -> {
-                String time = String.format(Locale.getDefault(), "%02d:%02d:00", hour, minute);
+                String timeForDb = String.format(Locale.getDefault(), "%02d:%02d:00", hour, minute);
 
                 if (listener != null) {
-                    listener.onCheckInClick(emp, time);
+                    listener.onCheckInClick(emp, timeForDb);
 
-                    holder.tvStatus.setText("Vào lúc: " + time);
-                    int color = time.compareTo("08:00:00") > 0 ? Color.RED : Color.GREEN;
+                    String timeForDisplay = DateUtils.formatDisplayTime(context, timeForDb);
+                    holder.tvStatus.setText("Vào lúc: " + timeForDisplay);
+
+                    int color = timeForDb.compareTo(workShift) > 0 ? Color.RED : Color.GREEN;
                     holder.tvStatus.setTextColor(color);
                     holder.btnCheckIn.setVisibility(View.GONE);
                 }

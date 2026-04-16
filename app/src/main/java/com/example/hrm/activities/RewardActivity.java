@@ -71,7 +71,7 @@ public class RewardActivity extends AppCompatActivity {
 
         recyclerViewKhenThuong.setLayoutManager(new LinearLayoutManager(this));
 
-        rewardAdapter = new RewardAdapter(rewardList, new OnItemActionListener<Reward>() {
+        rewardAdapter = new RewardAdapter(this, rewardList, new OnItemActionListener<Reward>() {
             @Override
             public void onEdit(Reward reward) {
                 showKhenThuongDialog(reward, true);

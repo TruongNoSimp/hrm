@@ -40,7 +40,7 @@ public class SalaryAdapter extends RecyclerView.Adapter<SalaryAdapter.SalaryView
         holder.tvNhanVien.setText(dto.getHoTen());
         holder.tvMaNhanVien.setText(dto.getMaNv());
         holder.tvThangNam.setText("Tháng: " + dto.getThangNam());
-        holder.tvNgayCong.setText("Sô ngày công: " + dto.getSoNgayCong());
+        holder.tvNgayCong.setText("Số ngày công: " + dto.getSoNgayCong());
 
         holder.tvThuong.setText("+ " + dto.getTongThuongDisplay());
         holder.tvPhat.setText("- " + dto.getTongPhatDisplay());

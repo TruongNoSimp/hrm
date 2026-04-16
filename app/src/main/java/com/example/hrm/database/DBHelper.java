@@ -3,12 +3,13 @@ package com.example.hrm.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import androidx.annotation.Nullable;
 
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "hrm.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 10;
 
     //PhongBan
     public static final String TABLE_PHONGBAN = "PhongBan";
@@ -61,6 +62,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COL_ID_USER = "id_user";
     public static final String COL_USERNAME = "username";
     public static final String COL_PASSWORD = "password";
+    public static final String COL_ADMINNAME = "adminName";
 
     //Luong (Salary)
     public static final String TABLE_LUONG = "Luong";
@@ -83,10 +85,26 @@ public class DBHelper extends SQLiteOpenHelper {
             {"PB07", "Chăm sóc khách hàng", "Hỗ trợ và tiếp nhận phản hồi"},
             {"PB08", "Kỹ thuật", "Bảo trì và hỗ trợ kỹ thuật"}
     };
-    private static final String[][] TAIKHOAN_SEED = {
-            {"admin", "123456"},
-            {"manager", "123456"}
+
+    private static final String[][] NHAN_VIEN_SEED = {
+            {"NV001", "Trần Hoàng Bách", "1990-01-05", "Nam", "0912000001", "bachth@gmail.com", "1", "Giám đốc", "2020-01-01", "5.0", "1"},
+            {"NV002", "Lê Hoài Nam", "1995-03-12", "Nam", "0912000002", "namlh@gmail.com", "3", "Trưởng phòng CNTT", "2023-01-10", "4.0", "1"},
+            {"NV003", "Nguyễn Minh Tuyết", "1998-11-25", "Nữ", "0912000003", "tuyetnm@gmail.com", "2", "Kế toán trưởng", "2023-05-20", "3.5", "1"},
+            {"NV004", "Phạm Thu Hà", "2000-08-14", "Nữ", "0912000004", "hapt@gmail.com", "4", "Trưởng nhóm Sales", "2024-02-15", "2.8", "1"},
+            {"NV005", "Vũ Đức Anh", "1997-12-30", "Nam", "0912000005", "anhvd@gmail.com", "8", "Kỹ thuật viên", "2023-09-12", "2.5", "1"},
+            {"NV006", "Đặng Thùy Chi", "1999-04-22", "Nữ", "0912000006", "chidt@gmail.com", "5", "Chuyên viên Marketing", "2023-10-01", "2.2", "1"},
+            {"NV007", "Bùi Quang Vinh", "1994-06-18", "Nam", "0912000007", "vinhbq@gmail.com", "3", "Lập trình viên", "2022-11-11", "3.2", "1"},
+            {"NV008", "Đỗ Mỹ Linh", "2001-02-28", "Nữ", "0912000008", "linhdm@gmail.com", "7", "Tư vấn viên", "2024-03-01", "2.0", "1"},
+            {"NV009", "Ngô Tiến Dũng", "1992-09-09", "Nam", "0912000009", "dungnt@gmail.com", "6", "Phó phòng Hành chính", "2021-05-20", "3.8", "1"},
+            {"NV010", "Hoàng Bảo Ngọc", "1996-05-05", "Nữ", "0912000010", "ngochb@gmail.com", "4", "Nhân viên kinh doanh", "2022-04-15", "2.4", "1"}
     };
+    private static final String[][] TAIKHOAN_SEED = {
+            {"ducpa", "123456", "Phạm Anh Đức"},
+            {"truongpm", "123456", "Phùng Minh Trường"},
+            {"baodg", "123456", "Đinh Gia Bảo"},
+            {"anhnv", "123456", "Nguyễn Văn Anh"}
+    };
+
 
     public DBHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -102,7 +120,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.beginTransaction();
         try {
-            // Tạo bảng Phòng Ban
             String createPB = "CREATE TABLE " + TABLE_PHONGBAN + " ("
                     + COL_ID_PB + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COL_MA_PB + " TEXT UNIQUE NOT NULL, "
@@ -110,7 +127,6 @@ public class DBHelper extends SQLiteOpenHelper {
                     + COL_MO_TA + " TEXT)";
             db.execSQL(createPB);
 
-            // Tạo bảng Nhân Viên
             String createNV = "CREATE TABLE " + TABLE_NHANVIEN + " ("
                     + COL_ID_NV + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COL_MA_NV + " TEXT UNIQUE NOT NULL, "
@@ -187,7 +203,8 @@ public class DBHelper extends SQLiteOpenHelper {
             String createTK = "CREATE TABLE " + TABLE_TAIKHOAN + " ("
                     + COL_ID_USER + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COL_USERNAME + " TEXT UNIQUE NOT NULL, "
-                    + COL_PASSWORD + " TEXT NOT NULL)";
+                    + COL_PASSWORD + " TEXT NOT NULL, "
+                    + COL_ADMINNAME + " TEXT)";
             db.execSQL(createTK);
 
             seedInitialData(db);
@@ -211,12 +228,31 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // Seed Tài Khoản
         for (String[] tk : TAIKHOAN_SEED) {
-            db.execSQL(
-                    "INSERT INTO " + TABLE_TAIKHOAN + " (" +
-                            COL_USERNAME + ", " +
-                            COL_PASSWORD + ") VALUES (?, ?)",
-                    new Object[]{tk[0], tk[1]}
-            );
+            db.execSQL("INSERT INTO " + TABLE_TAIKHOAN + " ("
+                            + COL_USERNAME + ", "
+                            + COL_PASSWORD + ", "
+                            + COL_ADMINNAME
+                            + ") VALUES (?, ?, ?)",
+                    new Object[]{tk[0], tk[1], tk[2]});
+        }
+
+        for (String[] nv : NHAN_VIEN_SEED) {
+            db.execSQL("INSERT INTO " + TABLE_NHANVIEN + " ("
+                            + COL_MA_NV + ", "
+                            + COL_HO_TEN + ", "
+                            + COL_NGAY_SINH + ", "
+                            + COL_GIOI_TINH + ", "
+                            + COL_SDT + ", "
+                            + COL_EMAIL + ", "
+                            + COL_ID_PB_FK + ", "
+                            + COL_CHUC_VU + ", "
+                            + COL_NGAY_VAO_LAM + ", "
+                            + COL_HE_SO_LUONG + ", "
+                            + COL_TRANG_THAI
+                            + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    new Object[]{nv[0], nv[1], nv[2], nv[3], nv[4], nv[5],
+                            Integer.parseInt(nv[6]), nv[7], nv[8],
+                            Double.parseDouble(nv[9]), Integer.parseInt(nv[10])});
         }
     }
 

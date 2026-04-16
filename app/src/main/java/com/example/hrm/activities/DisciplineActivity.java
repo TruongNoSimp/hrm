@@ -28,7 +28,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.example.hrm.listeners.OnItemActionListener;
+
 public class DisciplineActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewKyLuat;
@@ -72,7 +74,7 @@ public class DisciplineActivity extends AppCompatActivity {
 
         recyclerViewKyLuat.setLayoutManager(new LinearLayoutManager(this));
 
-        disciplineAdapter = new DisciplineAdapter(disciplineList, new OnItemActionListener<Discipline>() {
+        disciplineAdapter = new DisciplineAdapter(this, disciplineList, new OnItemActionListener<Discipline>() {
             @Override
             public void onEdit(Discipline discipline) {
                 showKyLuatDialog(discipline, true);
@@ -85,7 +87,6 @@ public class DisciplineActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(Discipline discipline) {
-                // chưa dùng thì để trống
             }
         });
 

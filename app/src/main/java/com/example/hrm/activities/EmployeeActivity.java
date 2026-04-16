@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hrm.R;
 import com.example.hrm.adapters.EmployeeAdapter;
+import com.example.hrm.adapters.EmployeeInfoDialog;
 import com.example.hrm.dao.EmployeeDAO;
 import com.example.hrm.listeners.OnEmployeeActionListener;
 import com.example.hrm.models.Department;
@@ -46,6 +47,7 @@ public class EmployeeActivity extends AppCompatActivity {
     private EmployeeAdapter employeeAdapter;
     private String currentAvatarUri = "";
     private ImageView imgDialogAvatar;
+    ImageView imgEditEmployee, imgDeleteEmployee;
     private static final int PICK_IMAGE_REQUEST = 100;
 
     @Override
@@ -73,7 +75,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
         recyclerViewEmployee.setLayoutManager(new LinearLayoutManager(this));
 
-        employeeAdapter = new EmployeeAdapter(employeeList, new OnEmployeeActionListener() {
+        employeeAdapter = new EmployeeAdapter(this, employeeList, new OnEmployeeActionListener() {
             @Override
             public void onEdit(Employee employee) {
                 showEmployeeDialog(employee, true);
@@ -86,7 +88,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(Employee employee) {
-                Toast.makeText(EmployeeActivity.this, "Nhân viên: " + employee.getHoTen(), Toast.LENGTH_SHORT).show();
+                showEmployeeDetail(employee);
             }
         });
 
@@ -399,5 +401,15 @@ public class EmployeeActivity extends AppCompatActivity {
                 year, month, day
         );
         datePickerDialog.show();
+    }
+
+    private void showEmployeeDetail(Employee employee) {
+        try {
+            EmployeeInfoDialog dialog = new EmployeeInfoDialog(this, employee);
+            dialog.show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Không thể hiển thị chi tiết: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 }

@@ -148,6 +148,7 @@
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="16sp" />
                         <TextView
+                            android:id="@+id/tvWorkShiftTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="08:00 AM"
@@ -155,6 +156,85 @@
                     </LinearLayout>
 
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?android:attr/listDivider" />
+
+                    <LinearLayout
+                        android:id="@+id/btnDateFormat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@android:drawable/ic_menu_today"
+                            app:tint="?attr/colorPrimary" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:layout_weight="1"
+                                android:text="Định dạng ngày hiển thị"
+                                android:textColor="?android:attr/textColorPrimary"
+                                android:textSize="16sp" />
+                            <TextView
+                                android:id="@+id/tvDateFormat"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="dd/MM/yyyy"
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:textSize="14sp"
+                                android:gravity="end"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?android:attr/listDivider" /><LinearLayout
+                        android:id="@+id/btnTimeFormat"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_lock_idle_alarm"
+                        app:tint="?attr/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:text="Định dạng giờ hiển thị"
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tvTimeFormat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="AM/PM"
+                            android:textColor="?android:attr/textColorSecondary" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?android:attr/listDivider" />
 
                     <LinearLayout
                         android:id="@+id/btnBackup"
@@ -173,7 +253,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:layout_weight="1"
-                            android:text="Sao lưu dữ liệu (.db)"
+                            android:text="Sao lưu dữ liệu"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="16sp" />
                     </LinearLayout>
@@ -272,12 +352,6 @@
                             android:text="Thông tin ứng dụng"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="16sp" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="v1.0.0"
-                            android:textColor="?android:attr/textColorSecondary"
-                            android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

@@ -1,5 +1,6 @@
 package com.example.hrm.adapters;
 
+import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,9 +21,11 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
 
     private final List<Employee> employeeList;
     private final OnEmployeeActionListener listener;
+    private final Context context;
 
 
-    public EmployeeAdapter(List<Employee> employeeList, OnEmployeeActionListener listener) {
+    public EmployeeAdapter(Context context, List<Employee> employeeList, OnEmployeeActionListener listener) {
+        this.context = context;
         this.employeeList = employeeList;
         this.listener = listener;
     }
@@ -80,7 +83,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
 
     public static class EmployeeViewHolder extends RecyclerView.ViewHolder {
         TextView tvMaNv, tvHoTen, tvPhongBan, tvChucVu;
-        ImageView imgEditEmployee, imgDeleteEmployee, imgAvatar; // Thêm imgAvatar
+        ImageView imgEditEmployee, imgDeleteEmployee, imgAvatar;
 
         public EmployeeViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -90,8 +93,6 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
             tvChucVu = itemView.findViewById(R.id.tvChucVu);
             imgEditEmployee = itemView.findViewById(R.id.imgEditEmployee);
             imgDeleteEmployee = itemView.findViewById(R.id.imgDeleteEmployee);
-
-            // Ánh xạ ImageView cho ảnh nhân viên ở bên phải
             imgAvatar = itemView.findViewById(R.id.imgAvatar);
         }
     }

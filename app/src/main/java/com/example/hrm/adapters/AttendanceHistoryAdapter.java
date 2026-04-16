@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hrm.R;
 import com.example.hrm.dto.AttendanceHistoryDTO;
+import com.example.hrm.utils.DateUtils;
 
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class AttendanceHistoryAdapter extends RecyclerView.Adapter<AttendanceHis
         AttendanceHistoryDTO dto = attendanceList.get(position);
 
         holder.tvName.setText(dto.getEmployeeName());
-        holder.tvTime.setText("Giờ vào: " + dto.getGioVao());
+        holder.tvTime.setText("Giờ vào: " + DateUtils.formatDisplayTime(context, dto.getGioVao()));
 
         // Set avatar
         if (dto.getAvatar() != null && !dto.getAvatar().isEmpty()) {

@@ -41,10 +41,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         initViews();
 
-        if (isBiometricEnabled) {
-            imgFingerprint.setVisibility(android.view.View.VISIBLE);
-        } else {
-            imgFingerprint.setVisibility(android.view.View.GONE);
+        if (isRemember) {
+            edtUsername.setText(prefs.getString("username", ""));
+            chkRemember.setChecked(true);
         }
 
         if (isRemember && isBiometricEnabled) {
@@ -57,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
             if (isBiometricEnabled) {
                 checkBiometric();
             } else {
-                Toast.makeText(this, "Mày chưa bật vân tay trong Cài đặt!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Vân tay chưa được thiết lập", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -87,19 +86,20 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        boolean isLogin = accountDAO.checkLogin(username, password);
+        String adminNameFromDB = accountDAO.checkLoginAndGetName(username, password);
 
-        if (isLogin) {
-            SharedPreferences.Editor editor =
-                    getSharedPreferences("SESSION", MODE_PRIVATE).edit();
+        if (adminNameFromDB != null) {
+            SharedPreferences.Editor editor = getSharedPreferences("SESSION", MODE_PRIVATE).edit();
 
             editor.putBoolean("isLogin", true);
             editor.putBoolean("remember", chkRemember.isChecked());
+
             editor.putString("username", username);
+            editor.putString("adminname", adminNameFromDB);
+
             editor.apply();
 
-            Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-
+            Toast.makeText(this, "Chào mừng " + adminNameFromDB, Toast.LENGTH_SHORT).show();
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();
         } else {
