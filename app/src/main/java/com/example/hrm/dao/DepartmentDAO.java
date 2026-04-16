@@ -23,21 +23,26 @@ public class DepartmentDAO {
         List<Department> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM PhongBan", null);
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT * FROM PhongBan", null);
 
-        if (cursor.moveToFirst()) {
-            do {
-                Department d = new Department();
-                d.setIdPhongBan(cursor.getInt(cursor.getColumnIndexOrThrow("id_phong_ban")));
-                d.setMaPb(cursor.getString(cursor.getColumnIndexOrThrow("ma_pb")));
-                d.setTenPhong(cursor.getString(cursor.getColumnIndexOrThrow("ten_phong")));
-                d.setMoTa(cursor.getString(cursor.getColumnIndexOrThrow("mo_ta")));
+            if (cursor.moveToFirst()) {
+                do {
+                    Department d = new Department();
+                    d.setIdPhongBan(cursor.getInt(cursor.getColumnIndexOrThrow("id_phong_ban")));
+                    d.setMaPb(cursor.getString(cursor.getColumnIndexOrThrow("ma_pb")));
+                    d.setTenPhong(cursor.getString(cursor.getColumnIndexOrThrow("ten_phong")));
+                    d.setMoTa(cursor.getString(cursor.getColumnIndexOrThrow("mo_ta")));
 
-                list.add(d);
-            } while (cursor.moveToNext());
+                    list.add(d);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        cursor.close();
-        db.close();
         return list;
     }
 

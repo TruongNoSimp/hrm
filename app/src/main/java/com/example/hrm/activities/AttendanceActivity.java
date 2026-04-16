@@ -1,12 +1,16 @@
 package com.example.hrm.activities;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,13 +21,14 @@ import com.example.hrm.dao.AttendanceDAO;
 import com.example.hrm.dao.EmployeeDAO;
 import com.example.hrm.dto.EmployeeAttendanceDTO;
 import com.example.hrm.dto.AttendanceHistoryDTO;
-import com.example.hrm.models.Attendance;
 import com.example.hrm.models.Employee;
+import com.example.hrm.utils.DateUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -39,6 +44,9 @@ public class AttendanceActivity extends AppCompatActivity {
     private List<EmployeeAttendanceDTO> originalList;
     private AttendanceAdapter adapter;
 
+    private String historyViewingDate;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +55,7 @@ public class AttendanceActivity extends AppCompatActivity {
         initViews();
         initData();
         initActions();
+        setupToolbar();
     }
 
     private void initViews() {
@@ -74,7 +83,7 @@ public class AttendanceActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 //Lọc theo tên nhân viên (Autocomplete)
-                filterList(s.toString());
+                search(s.toString());
             }
 
             @Override
@@ -89,6 +98,12 @@ public class AttendanceActivity extends AppCompatActivity {
         fabHistory.setOnClickListener(v -> showAttendanceHistory());
     }
 
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbarAttendance);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
+    }
+
     private void handleCheckIn(Employee employee, String selectedTime) {
         long result = attendanceDAO.markAttendance(employee.getIdNv(), selectedTime);
         if (result != -1) {
@@ -99,7 +114,7 @@ public class AttendanceActivity extends AppCompatActivity {
         }
     }
 
-    private void filterList(String query) {
+    private void search(String query) {
         employeeList.clear();
         for (EmployeeAttendanceDTO dto : originalList) {
             Employee e = dto.getEmployee();
@@ -116,41 +131,54 @@ public class AttendanceActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    public void showAttendanceHistory() {
-        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        List<AttendanceHistoryDTO> list = attendanceDAO.getHistoryByDateWithDTO(today);
-
-        if (list.isEmpty()) {
-            Toast.makeText(this, "Chưa có ai chấm công hôm nay!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        BottomSheetDialog dialog = new BottomSheetDialog(this);
-        View view = getLayoutInflater().inflate(R.layout.layout_history_bottom_sheet, null);
-
-        RecyclerView rvHistory = view.findViewById(R.id.rvHistory);
-        rvHistory.setLayoutManager(new LinearLayoutManager(this));
-
-        rvHistory.setAdapter(new AttendanceHistoryAdapter(this, list));
-
-        dialog.setContentView(view);
-        dialog.show();
-    }
-
-    private void search(String query) {
-        employeeList.clear();
-        for (EmployeeAttendanceDTO e : originalList) {
-            if (e.getEmployee().getHoTen().toLowerCase().contains(query.toLowerCase())) {
-                employeeList.add(e);
-            }
-        }
-        adapter.notifyDataSetChanged();
-    }
-
     private void loadLatestData() {
         originalList = attendanceDAO.getAllEmployeesWithAttendance();
         employeeList.clear();
         employeeList.addAll(originalList);
         adapter.notifyDataSetChanged();
+    }
+
+    public void showAttendanceHistory() {
+        historyViewingDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        View view = getLayoutInflater().inflate(R.layout.bottom_sheet_attendance_history, null);
+
+        RecyclerView rvHistory = view.findViewById(R.id.rvHistory);
+        TextView tvDate = view.findViewById(R.id.tvSelectedDateHistory);
+        LinearLayout btnPickDate = view.findViewById(R.id.btnPickDateHistory);
+
+        rvHistory.setLayoutManager(new LinearLayoutManager(this));
+        tvDate.setText("Ngày: " + DateUtils.formatDisplayDate(this, historyViewingDate));
+
+        updateHistoryList(rvHistory, historyViewingDate);
+
+        // Sự kiện chọn ngày
+        btnPickDate.setOnClickListener(v -> {
+            Calendar c = Calendar.getInstance();
+            new DatePickerDialog(this, (view1, year, month, dayOfMonth) -> {
+                Calendar selected = Calendar.getInstance();
+                selected.set(year, month, dayOfMonth);
+                historyViewingDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selected.getTime());
+
+                tvDate.setText("Ngày: " + DateUtils.formatDisplayDate(this, historyViewingDate));
+                updateHistoryList(rvHistory, historyViewingDate);
+
+            }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        dialog.setContentView(view);
+        dialog.show();
+    }
+
+    private void updateHistoryList(RecyclerView rv, String date) {
+        List<AttendanceHistoryDTO> list = attendanceDAO.getHistoryByDateWithDTO(date);
+        AttendanceHistoryAdapter adapterHistory = new AttendanceHistoryAdapter(this, list);
+        rv.setAdapter(adapterHistory);
+
+        if (list.isEmpty()) {
+            String displayDate = DateUtils.formatDisplayDate(this, date);
+            Toast.makeText(this, "Không có dữ liệu ngày " + displayDate, Toast.LENGTH_SHORT).show();
+        }
     }
 }

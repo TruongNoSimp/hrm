@@ -2,6 +2,7 @@ package com.example.hrm.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -20,8 +21,11 @@ import java.util.Locale;
 
 public class AttendanceDAO {
     private DBHelper dbHelper;
+    private Context context;
 
     public AttendanceDAO(Context context) {
+
+        this.context = context;
         dbHelper = new DBHelper(context);
     }
 
@@ -30,11 +34,15 @@ public class AttendanceDAO {
         ContentValues values = new ContentValues();
 
         String currentDate = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(new Date());
+
+        SharedPreferences prefs = context.getSharedPreferences("SESSION", Context.MODE_PRIVATE);
+        String workShift = prefs.getString("work_shift", "08:00") + ":00";
+
         values.put(DBHelper.COL_ID_NV_FK, idNv);
         values.put(DBHelper.COL_GIO_VAO, gioVao);
         values.put(DBHelper.COL_NGAY_CC, currentDate);
 
-        int trangThai = gioVao.compareTo("08:00:00") > 0 ? 2 : 1;
+        int trangThai = gioVao.compareTo(workShift) > 0 ? 2 : 1;
         values.put(DBHelper.COL_CC_TRANG_THAI, trangThai);
 
         //Update attendance to void conflict
@@ -161,5 +169,24 @@ public class AttendanceDAO {
 
         c.close();
         return list;
+    }
+
+    public int getAttendanceCountToday() {
+        int count = 0;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        String sql = "SELECT COUNT(*) FROM " + DBHelper.TABLE_CHUYENCAN +
+                " WHERE " + DBHelper.COL_NGAY_CC + " = ?";
+
+        Cursor c = db.rawQuery(sql, new String[]{today});
+
+        if (c.moveToFirst()) {
+            count = c.getInt(0);
+        }
+
+        c.close();
+        return count;
     }
 }

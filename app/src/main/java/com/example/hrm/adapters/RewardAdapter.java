@@ -1,5 +1,6 @@
 package com.example.hrm.adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hrm.R;
 import com.example.hrm.listeners.OnItemActionListener;
 import com.example.hrm.models.Reward;
+import com.example.hrm.utils.DateUtils;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -21,8 +23,10 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.KhenThuong
     private List<Reward> rewardList;
     private OnItemActionListener<Reward> listener;
     private final DecimalFormat decimalFormat = new DecimalFormat("#,###");
+    private final Context context;
 
-    public RewardAdapter(List<Reward> rewardList, OnItemActionListener<Reward> listener) {
+    public RewardAdapter(Context context, List<Reward> rewardList, OnItemActionListener<Reward> listener) {
+        this.context = context;
         this.rewardList = rewardList;
         this.listener = listener;
     }
@@ -40,10 +44,13 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.KhenThuong
         Reward reward = rewardList.get(position);
 
         holder.tvTenNhanVien.setText(reward.getTenNhanVien());
-        holder.tvMaNhanVien.setText("Mã NV: " + reward.getMaNhanVien());
-        holder.tvNgayQuyetDinh.setText("Ngày quyết định: " + reward.getNgayQuyetDinh());
-        holder.tvHinhThuc.setText("Hình thức: " + reward.getHinhThuc());
-        holder.tvSoTienThuong.setText("Số tiền thưởng: " + decimalFormat.format(reward.getSoTienThuong()) + " VNĐ");
+        holder.tvMaNhanVien.setText(reward.getMaNhanVien());
+
+        String displayDate = DateUtils.formatDisplayDate(context, reward.getNgayQuyetDinh());
+        holder.tvNgayQuyetDinh.setText(displayDate);
+
+        holder.tvHinhThuc.setText(reward.getHinhThuc());
+        holder.tvSoTienThuong.setText("+" + decimalFormat.format(reward.getSoTienThuong()) + " VNĐ");
         holder.tvLyDo.setText("Lý do: " + reward.getLyDo());
 
         holder.imgEdit.setOnClickListener(v -> {

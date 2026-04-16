@@ -29,52 +29,60 @@ public class EmployeeDAO {
                 "LEFT JOIN " + DBHelper.TABLE_PHONGBAN + " pb ON nv." + DBHelper.COL_ID_PB_FK + " = pb." + DBHelper.COL_ID_PB + " " +
                 "ORDER BY nv." + DBHelper.COL_ID_NV + " DESC";
 
-        Cursor cursor = db.rawQuery(sql, null);
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(sql, null);
 
-        if (cursor.moveToFirst()) {
-            do {
-                Employee e = new Employee();
-                e.setIdNv(cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.COL_ID_NV)));
-                e.setMaNv(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_MA_NV)));
-                e.setHoTen(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_HO_TEN)));
-                e.setNgaySinh(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_NGAY_SINH)));
-                e.setGioiTinh(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_GIOI_TINH)));
-                e.setSoDt(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_SDT)));
-                e.setEmail(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_EMAIL)));
-                e.setIdPhongBan(cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.COL_ID_PB_FK)));
-                e.setChucVu(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_CHUC_VU)));
-                e.setNgayVaoLam(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_NGAY_VAO_LAM)));
-                e.setHeSoLuong(cursor.getDouble(cursor.getColumnIndexOrThrow(DBHelper.COL_HE_SO_LUONG)));
-                e.setTrangThai(cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.COL_TRANG_THAI)));
-                e.setTenPhongBan(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_TEN_PB)));
-                e.setAvatar(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_AVATAR)));
-                list.add(e);
-            } while (cursor.moveToNext());
+            if (cursor.moveToFirst()) {
+                do {
+                    Employee e = new Employee();
+                    e.setIdNv(cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.COL_ID_NV)));
+                    e.setMaNv(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_MA_NV)));
+                    e.setHoTen(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_HO_TEN)));
+                    e.setNgaySinh(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_NGAY_SINH)));
+                    e.setGioiTinh(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_GIOI_TINH)));
+                    e.setSoDt(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_SDT)));
+                    e.setEmail(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_EMAIL)));
+                    e.setIdPhongBan(cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.COL_ID_PB_FK)));
+                    e.setChucVu(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_CHUC_VU)));
+                    e.setNgayVaoLam(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_NGAY_VAO_LAM)));
+                    e.setHeSoLuong(cursor.getDouble(cursor.getColumnIndexOrThrow(DBHelper.COL_HE_SO_LUONG)));
+                    e.setTrangThai(cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.COL_TRANG_THAI)));
+                    e.setTenPhongBan(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_TEN_PB)));
+                    e.setAvatar(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COL_AVATAR)));
+                    list.add(e);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-
-        cursor.close();
-        db.close();
         return list;
     }
     public List<Department> getAllDepartments() {
         List<Department> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM PhongBan ORDER BY ten_phong ASC", null);
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT * FROM PhongBan ORDER BY ten_phong ASC", null);
 
-        if (cursor.moveToFirst()) {
-            do {
-                Department d = new Department();
-                d.setIdPhongBan(cursor.getInt(cursor.getColumnIndexOrThrow("id_phong_ban")));
-                d.setMaPb(cursor.getString(cursor.getColumnIndexOrThrow("ma_pb")));
-                d.setTenPhong(cursor.getString(cursor.getColumnIndexOrThrow("ten_phong")));
-                d.setMoTa(cursor.getString(cursor.getColumnIndexOrThrow("mo_ta")));
-                list.add(d);
-            } while (cursor.moveToNext());
+            if (cursor.moveToFirst()) {
+                do {
+                    Department d = new Department();
+                    d.setIdPhongBan(cursor.getInt(cursor.getColumnIndexOrThrow("id_phong_ban")));
+                    d.setMaPb(cursor.getString(cursor.getColumnIndexOrThrow("ma_pb")));
+                    d.setTenPhong(cursor.getString(cursor.getColumnIndexOrThrow("ten_phong")));
+                    d.setMoTa(cursor.getString(cursor.getColumnIndexOrThrow("mo_ta")));
+                    list.add(d);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-
-        cursor.close();
-        db.close();
         return list;
     }
 
@@ -147,13 +155,37 @@ public class EmployeeDAO {
 
     public int getEmployeeCountFromDB() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + DBHelper.TABLE_NHANVIEN, null);
-        int count = 0;
-        if (cursor.moveToFirst()) {
-            count = cursor.getInt(0);
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT COUNT(*) FROM " + DBHelper.TABLE_NHANVIEN, null);
+            int count = 0;
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            return count;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        cursor.close();
-        db.close();
-        return count;
+    }
+
+    public int getAttendanceCountToday() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(new java.util.Date());
+            cursor = db.rawQuery("SELECT COUNT(*) FROM " + DBHelper.TABLE_CHUYENCAN +
+                    " WHERE " + DBHelper.COL_NGAY_CC + " = ?", new String[]{today});
+            int count = 0;
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            return count;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 }

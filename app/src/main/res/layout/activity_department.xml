@@ -2,9 +2,10 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"> <LinearLayout
+    android:background="?android:attr/windowBackground"> <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -12,14 +13,13 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#1976D2"
-        android:fitsSystemWindows="true">
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbarDepartment"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#1976D2"
+            android:background="?attr/colorPrimary"
             app:title="Quản lý phòng ban"
             app:titleTextColor="@android:color/white"
             app:navigationIcon="@drawable/ic_back"
@@ -32,32 +32,40 @@
         android:layout_height="match_parent"
         android:padding="12dp">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:id="@+id/layoutSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp"
-            android:background="#FFFFFF"
             android:layout_marginTop="8dp"
-            android:elevation="2dp">
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
 
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@android:drawable/ic_menu_search"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="8dp" />
-
-            <EditText
-                android:id="@+id/edtSearchDepartment"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Tìm kiếm phòng ban..."
-                android:background="@android:color/transparent"
-                android:padding="6dp"
-                android:textSize="15sp" />
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@android:drawable/ic_menu_search"
+                    app:tint="?android:attr/textColorSecondary" />
+
+                <EditText
+                    android:id="@+id/edtSearchDepartment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Tìm kiếm phòng ban..."
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColorHint="?android:attr/textColorSecondary"
+                    android:background="@android:color/transparent"
+                    android:layout_marginStart="8dp"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewDepartment"
@@ -65,7 +73,8 @@
             android:layout_height="match_parent"
             android:layout_below="@id/layoutSearch"
             android:layout_marginTop="12dp"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            tools:listitem="@layout/item_department" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAddDepartment"
@@ -74,12 +83,10 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_margin="16dp"
-            android:contentDescription="Thêm phòng ban"
             android:src="@android:drawable/ic_input_add"
-            app:backgroundTint="#1976D2"
+            app:backgroundTint="?attr/colorPrimary"
             app:tint="#FFFFFF" />
 
     </RelativeLayout>
 </LinearLayout>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

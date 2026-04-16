@@ -1,6 +1,7 @@
 package com.example.hrm.activities;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -27,7 +28,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.example.hrm.listeners.OnItemActionListener;
+
 public class DisciplineActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewKyLuat;
@@ -71,7 +74,7 @@ public class DisciplineActivity extends AppCompatActivity {
 
         recyclerViewKyLuat.setLayoutManager(new LinearLayoutManager(this));
 
-        disciplineAdapter = new DisciplineAdapter(disciplineList, new OnItemActionListener<Discipline>() {
+        disciplineAdapter = new DisciplineAdapter(this, disciplineList, new OnItemActionListener<Discipline>() {
             @Override
             public void onEdit(Discipline discipline) {
                 showKyLuatDialog(discipline, true);
@@ -84,7 +87,6 @@ public class DisciplineActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(Discipline discipline) {
-                // chưa dùng thì để trống
             }
         });
 
@@ -158,6 +160,10 @@ public class DisciplineActivity extends AppCompatActivity {
         EditText edtLyDo = view.findViewById(R.id.edtLyDo);
         Button btnSave = view.findViewById(R.id.btnSaveKyLuat);
         Button btnClose = view.findViewById(R.id.btnCloseDialog);
+
+        edtNgayQuyetDinh.setFocusable(false);
+        edtNgayQuyetDinh.setClickable(true);
+        edtNgayQuyetDinh.setOnClickListener(v -> showDatePicker(edtNgayQuyetDinh));
 
         employeeList = getEmployeeList();
         setupEmployeeSpinner(spNhanVien, employeeList);
@@ -368,5 +374,37 @@ public class DisciplineActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
+    }
+
+    private void showDatePicker(EditText editText) {
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+
+        // Nếu EditText đã có ngày, cố gắng parse để hiển thị đúng ngày đó trên lịch
+        String currentText = editText.getText().toString();
+        if (!currentText.isEmpty()) {
+            try {
+                String[] parts = currentText.split("-");
+                if (parts.length == 3) {
+                    calendar.set(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) - 1, Integer.parseInt(parts[2]));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        int year = calendar.get(java.util.Calendar.YEAR);
+        int month = calendar.get(java.util.Calendar.MONTH);
+        int day = calendar.get(java.util.Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    // Format định dạng yyyy-MM-dd để lưu xuống database cho chuẩn
+                    String date = String.format(java.util.Locale.US, "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                    editText.setText(date);
+                },
+                year, month, day
+        );
+        datePickerDialog.show();
     }
 }

@@ -7,8 +7,6 @@ public class Discipline {
     private String hinhThuc;
     private double soTienPhat;
     private String lyDo;
-
-    // Dùng để hiển thị khi JOIN với bảng NhanVien
     private String tenNhanVien;
     private String maNhanVien;
 

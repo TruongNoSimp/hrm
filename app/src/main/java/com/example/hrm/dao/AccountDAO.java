@@ -1,5 +1,6 @@
 package com.example.hrm.dao;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -31,7 +32,43 @@ public class AccountDAO {
             if (cursor != null) {
                 cursor.close();
             }
-            db.close();
         }
+    }
+
+    public boolean updatePassword(String username, String oldPass, String newPass) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        String sqlCheck = "SELECT * FROM " + DBHelper.TABLE_TAIKHOAN +
+                " WHERE " + DBHelper.COL_USERNAME + " = ? AND " + DBHelper.COL_PASSWORD + " = ?";
+        Cursor cursor = db.rawQuery(sqlCheck, new String[]{username, oldPass});
+
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            ContentValues values = new ContentValues();
+            values.put(DBHelper.COL_PASSWORD, newPass);
+
+            int result = db.update(DBHelper.TABLE_TAIKHOAN, values,
+                    DBHelper.COL_USERNAME + " = ?", new String[]{username});
+            return result > 0;
+        }
+
+        cursor.close();
+        return false;
+    }
+
+    public String checkLoginAndGetName(String user, String pass) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String sql = "SELECT " + DBHelper.COL_ADMINNAME +
+                " FROM " + DBHelper.TABLE_TAIKHOAN +
+                " WHERE " + DBHelper.COL_USERNAME + " = ? AND " + DBHelper.COL_PASSWORD + " = ?";
+
+        Cursor cursor = db.rawQuery(sql, new String[]{user, pass});
+        String name = null;
+
+        if (cursor.moveToFirst()) {
+            name = cursor.getString(0);
+        }
+        cursor.close();
+        return name;
     }
 }

@@ -71,7 +71,7 @@ public class RewardActivity extends AppCompatActivity {
 
         recyclerViewKhenThuong.setLayoutManager(new LinearLayoutManager(this));
 
-        rewardAdapter = new RewardAdapter(rewardList, new OnItemActionListener<Reward>() {
+        rewardAdapter = new RewardAdapter(this, rewardList, new OnItemActionListener<Reward>() {
             @Override
             public void onEdit(Reward reward) {
                 showKhenThuongDialog(reward, true);
@@ -157,6 +157,11 @@ public class RewardActivity extends AppCompatActivity {
         EditText edtLyDo = view.findViewById(R.id.edtLyDo);
         Button btnSave = view.findViewById(R.id.btnSaveKhenThuong);
         Button btnClose = view.findViewById(R.id.btnCloseDialog);
+
+        edtNgayQuyetDinh.setFocusable(false);
+        edtNgayQuyetDinh.setClickable(true);
+
+        edtNgayQuyetDinh.setOnClickListener(v -> showDatePicker(edtNgayQuyetDinh));
 
         employeeList = getEmployeeList();
         setupEmployeeSpinner(spNhanVien, employeeList);
@@ -303,6 +308,38 @@ public class RewardActivity extends AppCompatActivity {
         }
 
         return soTienThuong;
+    }
+
+    private void showDatePicker(EditText editText) {
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+
+        // Nếu EditText đã có ngày, cố gắng parse để hiển thị đúng ngày đó trên lịch
+        String currentText = editText.getText().toString();
+        if (!currentText.isEmpty()) {
+            try {
+                String[] parts = currentText.split("-");
+                if (parts.length == 3) {
+                    calendar.set(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) - 1, Integer.parseInt(parts[2]));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        int year = calendar.get(java.util.Calendar.YEAR);
+        int month = calendar.get(java.util.Calendar.MONTH);
+        int day = calendar.get(java.util.Calendar.DAY_OF_MONTH);
+
+        android.app.DatePickerDialog datePickerDialog = new android.app.DatePickerDialog(
+                this,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    // Format định dạng yyyy-MM-dd để lưu xuống database cho chuẩn
+                    String date = String.format(java.util.Locale.US, "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                    editText.setText(date);
+                },
+                year, month, day
+        );
+        datePickerDialog.show();
     }
 
     private void updateKhenThuong(AlertDialog dialog,

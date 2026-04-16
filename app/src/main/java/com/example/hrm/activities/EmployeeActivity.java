@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hrm.R;
 import com.example.hrm.adapters.EmployeeAdapter;
+import com.example.hrm.adapters.EmployeeInfoDialog;
 import com.example.hrm.dao.EmployeeDAO;
 import com.example.hrm.listeners.OnEmployeeActionListener;
 import com.example.hrm.models.Department;
@@ -46,6 +47,7 @@ public class EmployeeActivity extends AppCompatActivity {
     private EmployeeAdapter employeeAdapter;
     private String currentAvatarUri = "";
     private ImageView imgDialogAvatar;
+    ImageView imgEditEmployee, imgDeleteEmployee;
     private static final int PICK_IMAGE_REQUEST = 100;
 
     @Override
@@ -73,7 +75,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
         recyclerViewEmployee.setLayoutManager(new LinearLayoutManager(this));
 
-        employeeAdapter = new EmployeeAdapter(employeeList, new OnEmployeeActionListener() {
+        employeeAdapter = new EmployeeAdapter(this, employeeList, new OnEmployeeActionListener() {
             @Override
             public void onEdit(Employee employee) {
                 showEmployeeDialog(employee, true);
@@ -86,7 +88,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(Employee employee) {
-                Toast.makeText(EmployeeActivity.this, "Nhân viên: " + employee.getHoTen(), Toast.LENGTH_SHORT).show();
+                showEmployeeDetail(employee);
             }
         });
 
@@ -112,13 +114,17 @@ public class EmployeeActivity extends AppCompatActivity {
     private void initSearch() {
         edtSearchEmployee.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 filterEmployees(s.toString());
             }
+
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
     }
 
@@ -177,6 +183,8 @@ public class EmployeeActivity extends AppCompatActivity {
             Spinner spinnerTrangThai = view.findViewById(R.id.spinnerTrangThai);
             Button btnSaveEmployee = view.findViewById(R.id.btnSaveEmployee);
             Button btnCloseEmployeeDialog = view.findViewById(R.id.btnCloseEmployeeDialog);
+            ImageView btnPlusHeSo = view.findViewById(R.id.btnPlusHeSo);
+            ImageView btnMinusHeSo = view.findViewById(R.id.btnMinusHeSo);
 
             AlertDialog dialog = builder.create();
             dialog.show();
@@ -195,7 +203,9 @@ public class EmployeeActivity extends AppCompatActivity {
 
             List<Department> departmentList = employeeDAO.getAllDepartments();
             List<String> departmentNames = new ArrayList<>();
-            for (Department d : departmentList) { departmentNames.add(d.getTenPhong()); }
+            for (Department d : departmentList) {
+                departmentNames.add(d.getTenPhong());
+            }
 
             ArrayAdapter<String> adapterGT = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Nam", "Nữ", "Khác"});
             adapterGT.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -209,9 +219,31 @@ public class EmployeeActivity extends AppCompatActivity {
             adapterTT.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinnerTrangThai.setAdapter(adapterTT);
 
+            btnPlusHeSo.setOnClickListener(v -> {
+                try {
+                    double current = Double.parseDouble(edtHeSoLuong.getText().toString());
+                    edtHeSoLuong.setText(String.format(java.util.Locale.US, "%.1f", current + 0.5));
+                } catch (Exception e) {
+                    edtHeSoLuong.setText("1.0");
+                }
+            });
+
+            btnMinusHeSo.setOnClickListener(v -> {
+                try {
+                    double current = Double.parseDouble(edtHeSoLuong.getText().toString());
+                    if (current > 0.1) {
+                        edtHeSoLuong.setText(String.format(java.util.Locale.US, "%.1f", current - 0.5));
+                    }
+                } catch (Exception e) {
+                    edtHeSoLuong.setText("1.0");
+                }
+            });
+
             if (isEdit && employee != null) {
                 currentAvatarUri = employee.getAvatar() != null ? employee.getAvatar() : "";
-                if (!currentAvatarUri.isEmpty()) { imgDialogAvatar.setImageURI(Uri.parse(currentAvatarUri)); }
+                if (!currentAvatarUri.isEmpty()) {
+                    imgDialogAvatar.setImageURI(Uri.parse(currentAvatarUri));
+                }
                 edtMaNv.setText(employee.getMaNv());
                 edtHoTen.setText(employee.getHoTen());
                 edtNgaySinh.setText(employee.getNgaySinh());
@@ -237,12 +269,25 @@ public class EmployeeActivity extends AppCompatActivity {
                 String chucVu = edtChucVu.getText().toString().trim();
                 String heSoLuongStr = edtHeSoLuong.getText().toString().trim();
 
-                if (TextUtils.isEmpty(maNv)) { edtMaNv.setError("Cần mã NV"); return; }
-                if (TextUtils.isEmpty(hoTen)) { edtHoTen.setError("Cần họ tên"); return; }
-                if (TextUtils.isEmpty(chucVu)) { edtChucVu.setError("Cần chức vụ"); return; }
+                if (TextUtils.isEmpty(maNv)) {
+                    edtMaNv.setError("Cần mã NV");
+                    return;
+                }
+                if (TextUtils.isEmpty(hoTen)) {
+                    edtHoTen.setError("Cần họ tên");
+                    return;
+                }
+                if (TextUtils.isEmpty(chucVu)) {
+                    edtChucVu.setError("Cần chức vụ");
+                    return;
+                }
 
                 double heSoLuong;
-                try { heSoLuong = Double.parseDouble(heSoLuongStr); } catch (Exception e) { heSoLuong = 0; }
+                try {
+                    heSoLuong = Double.parseDouble(heSoLuongStr);
+                } catch (Exception e) {
+                    heSoLuong = 0;
+                }
 
                 int idPhongBan = departmentList.get(spinnerPhongBan.getSelectedItemPosition()).getIdPhongBan();
                 int trangThai = spinnerTrangThai.getSelectedItemPosition() == 0 ? 1 : 0;
@@ -356,5 +401,15 @@ public class EmployeeActivity extends AppCompatActivity {
                 year, month, day
         );
         datePickerDialog.show();
+    }
+
+    private void showEmployeeDetail(Employee employee) {
+        try {
+            EmployeeInfoDialog dialog = new EmployeeInfoDialog(this, employee);
+            dialog.show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Không thể hiển thị chi tiết: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 }

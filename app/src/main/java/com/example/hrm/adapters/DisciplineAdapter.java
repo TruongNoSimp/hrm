@@ -1,5 +1,6 @@
 package com.example.hrm.adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +17,17 @@ import java.text.DecimalFormat;
 import java.util.List;
 import com.example.hrm.listeners.OnItemActionListener;
 import com.example.hrm.models.Employee;
+import com.example.hrm.utils.DateUtils;
 
 public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.KyLuatViewHolder> {
 
     private List<Discipline> disciplineList;
     private OnItemActionListener<Discipline> listener;
     private DecimalFormat decimalFormat = new DecimalFormat("#,###");
+    private Context context;
 
-    public DisciplineAdapter(List<Discipline> disciplineList,OnItemActionListener<Discipline> listener) {
+    public DisciplineAdapter(Context context, List<Discipline> disciplineList, OnItemActionListener<Discipline> listener) {
+        this.context = context;
         this.disciplineList = disciplineList;
         this.listener = listener;
     }
@@ -42,9 +46,12 @@ public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.Ky
 
         holder.tvTenNhanVien.setText(discipline.getTenNhanVien());
         holder.tvMaNhanVien.setText("Mã NV: " + discipline.getMaNhanVien());
-        holder.tvNgayQuyetDinh.setText("Ngày quyết định: " + discipline.getNgayQuyetDinh());
-        holder.tvHinhThuc.setText("Hình thức: " + discipline.getHinhThuc());
-        holder.tvSoTienPhat.setText("Tiền phạt: " + decimalFormat.format(discipline.getSoTienPhat()) + " VNĐ");
+
+        String displayDate = DateUtils.formatDisplayDate(context, discipline.getNgayQuyetDinh());
+        holder.tvNgayQuyetDinh.setText(displayDate);
+
+        holder.tvHinhThuc.setText(discipline.getHinhThuc());
+        holder.tvSoTienPhat.setText("- " + decimalFormat.format(discipline.getSoTienPhat()) + " VNĐ");
         holder.tvLyDo.setText("Lý do: " + discipline.getLyDo());
 
         holder.ivEdit.setOnClickListener(v -> {

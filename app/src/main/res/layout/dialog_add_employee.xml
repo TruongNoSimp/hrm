@@ -3,115 +3,216 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#F8F9FA">
+    android:background="?android:attr/windowBackground"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="24dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="THÔNG TIN NHÂN VIÊN"
+            android:text="HỒ SƠ NHÂN VIÊN"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#1A73E8"
+            android:textColor="?attr/colorPrimary"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="24dp" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="24dp"
+            app:cardBackgroundColor="?attr/colorSurface">
             <ImageView
                 android:id="@+id/imgDialogAvatar"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@drawable/ic_avatar_default"
                 android:scaleType="centerCrop"
-                android:background="#EEEEEE" />
+                android:src="@drawable/ic_avatar_default"
+                android:background="?attr/colorSecondaryContainer" />
         </androidx.cardview.widget.CardView>
 
-        <TextView android:text="Mã nhân viên" style="@style/LabelStyle" />
+        <TextView android:text="Mã nhân viên" android:textColor="?attr/colorPrimary" android:textSize="11sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
         <EditText
             android:id="@+id/edtMaNv"
-            style="@style/InputStyle"
-            android:hint="Nhập mã nhân viên" />
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_all"
+            android:paddingHorizontal="16dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:layout_marginBottom="16dp"
+            android:hint="Nhập mã nhân viên"
+            android:textColorHint="?android:attr/textColorSecondary" />
 
-        <TextView android:text="Họ và tên" style="@style/LabelStyle" />
+        <TextView android:text="Họ và tên" android:textColor="?attr/colorPrimary" android:textSize="11sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
         <EditText
             android:id="@+id/edtHoTen"
-            style="@style/InputStyle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_all"
+            android:paddingHorizontal="16dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:layout_marginBottom="16dp"
             android:hint="Nhập đầy đủ họ tên" />
 
-        <TextView android:text="Ngày sinh" style="@style/LabelStyle" />
+        <TextView android:text="Ngày sinh" android:textColor="?attr/colorPrimary" android:textSize="11sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
         <EditText
             android:id="@+id/edtNgaySinh"
-            style="@style/InputStyle"
-            android:hint="Bấm để chọn ngày sinh"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_all"
+            android:paddingHorizontal="16dp"
+            android:textColor="?android:attr/textColorPrimary"
             android:focusable="false"
             android:clickable="true"
+            android:layout_marginBottom="16dp"
+            android:hint="Bấm để chọn ngày sinh"
             android:drawableEnd="@android:drawable/ic_menu_my_calendar" />
 
-        <TextView android:text="Giới tính" style="@style/LabelStyle" />
-        <FrameLayout style="@style/InputStyle">
+        <TextView android:text="Giới tính" android:textColor="?attr/colorPrimary" android:textSize="11sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_all"
+            android:layout_marginBottom="16dp">
             <Spinner
                 android:id="@+id/spinnerGioiTinh"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </FrameLayout>
 
-        <TextView android:text="Số điện thoại" style="@style/LabelStyle" />
+        <TextView android:text="Số điện thoại" android:textColor="?attr/colorPrimary" android:textSize="11sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
         <EditText
             android:id="@+id/edtSoDt"
-            style="@style/InputStyle"
-            android:hint="Nhập số điện thoại"
-            android:inputType="phone" />
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_all"
+            android:paddingHorizontal="16dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:inputType="phone"
+            android:layout_marginBottom="16dp"
+            android:hint="Nhập số điện thoại" />
 
-        <TextView android:text="Email" style="@style/LabelStyle" />
+        <TextView android:text="Email" android:textColor="?attr/colorPrimary" android:textSize="11sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
         <EditText
             android:id="@+id/edtEmail"
-            style="@style/InputStyle"
-            android:hint="example@gmail.com"
-            android:inputType="textEmailAddress" />
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_all"
+            android:paddingHorizontal="16dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:inputType="textEmailAddress"
+            android:layout_marginBottom="16dp"
+            android:hint="example@gmail.com" />
 
-        <TextView android:text="Phòng ban" style="@style/LabelStyle" />
-        <FrameLayout style="@style/InputStyle">
+        <TextView android:text="Phòng ban" android:textColor="?attr/colorPrimary" android:textSize="11sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_all"
+            android:layout_marginBottom="16dp">
             <Spinner
                 android:id="@+id/spinnerPhongBan"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </FrameLayout>
 
-        <TextView android:text="Chức vụ" style="@style/LabelStyle" />
+        <TextView android:text="Chức vụ" android:textColor="?attr/colorPrimary" android:textSize="11sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
         <EditText
             android:id="@+id/edtChucVu"
-            style="@style/InputStyle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_all"
+            android:paddingHorizontal="16dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:layout_marginBottom="16dp"
             android:hint="Ví dụ: Trưởng phòng" />
 
-        <TextView android:text="Ngày vào làm" style="@style/LabelStyle" />
+        <TextView android:text="Ngày vào làm" android:textColor="?attr/colorPrimary" android:textSize="11sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
         <EditText
             android:id="@+id/edtNgayVaoLam"
-            style="@style/InputStyle"
-            android:hint="Bấm để chọn ngày"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_all"
+            android:paddingHorizontal="16dp"
+            android:textColor="?android:attr/textColorPrimary"
             android:focusable="false"
             android:clickable="true"
+            android:layout_marginBottom="16dp"
+            android:hint="Bấm để chọn ngày"
             android:drawableEnd="@android:drawable/ic_menu_my_calendar" />
 
-        <TextView android:text="Hệ số lương" style="@style/LabelStyle" />
-        <EditText
-            android:id="@+id/edtHeSoLuong"
-            style="@style/InputStyle"
-            android:hint="Ví dụ: 2.34"
-            android:inputType="numberDecimal" />
+        <TextView android:text="Hệ số lương" android:textColor="?attr/colorPrimary" android:textSize="11sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_input_all"
+            android:paddingHorizontal="12dp"
+            android:layout_marginBottom="16dp">
 
-        <TextView android:text="Trạng thái" style="@style/LabelStyle" />
-        <FrameLayout style="@style/InputStyle" android:layout_marginBottom="24dp">
+            <EditText
+                android:id="@+id/edtHeSoLuong"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:inputType="numberDecimal"
+                android:text="1.0"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_toStartOf="@+id/layoutArrows"/>
+
+            <LinearLayout
+                android:id="@+id/layoutArrows"
+                android:layout_width="44dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="1dp"
+                android:orientation="vertical"
+                android:background="@drawable/bg_input_all"
+                android:backgroundTint="?attr/colorSurfaceVariant"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/btnPlusHeSo"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:src="@android:drawable/arrow_up_float"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="?attr/colorPrimary" />
+
+                <View
+                    android:layout_width="24dp"
+                    android:layout_height="1dp"
+                    android:background="?attr/colorOutlineVariant"
+                    android:alpha="0.5" />
+
+                <ImageView
+                    android:id="@+id/btnMinusHeSo"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:src="@android:drawable/arrow_down_float"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="?attr/colorPrimary" />
+
+            </LinearLayout>
+        </RelativeLayout>
+
+        <TextView android:text="Trạng thái" android:textColor="?attr/colorPrimary" android:textSize="11sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_all"
+            android:layout_marginBottom="24dp">
             <Spinner
                 android:id="@+id/spinnerTrangThai"
                 android:layout_width="match_parent"
@@ -123,23 +224,22 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="end">
-
             <Button
                 android:id="@+id/btnCloseEmployeeDialog"
-                style="?android:attr/borderlessButtonStyle"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:text="Hủy"
-                android:textColor="#666666" />
-
+                android:textColor="?android:attr/textColorSecondary" />
             <Button
                 android:id="@+id/btnSaveEmployee"
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:text="Lưu hồ sơ"
-                android:backgroundTint="#1A73E8"
-                android:textColor="#FFFFFF" />
+                android:backgroundTint="?attr/colorPrimary"
+                android:textColor="?attr/colorOnPrimary"
+                app:cornerRadius="12dp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

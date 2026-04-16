@@ -1,133 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:fillViewport="true"
-    android:background="@android:color/white">
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="8dp">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nhân viên"
-            android:textColor="#212121"
-            android:textStyle="bold" />
-
-        <Spinner
-            android:id="@+id/spNhanVien"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="6dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Ngày quyết định"
-            android:textColor="#212121"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/edtNgayQuyetDinh"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="6dp"
-            android:background="@android:drawable/edit_text"
-            android:hint="yyyy-MM-dd"
-            android:inputType="text"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Hình thức kỷ luật"
-            android:textColor="#212121"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/edtHinhThuc"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="6dp"
-            android:background="@android:drawable/edit_text"
-            android:hint="Ví dụ: Khiển trách / Cảnh cáo / Phạt tiền"
-            android:inputType="textCapSentences"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Số tiền phạt"
-            android:textColor="#212121"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/edtSoTienPhat"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="6dp"
-            android:background="@android:drawable/edit_text"
-            android:hint="Nhập số tiền phạt"
-            android:inputType="numberDecimal"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Lý do"
-            android:textColor="#212121"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/edtLyDo"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginTop="6dp"
-            android:background="@android:drawable/edit_text"
-            android:gravity="top|start"
-            android:hint="Nhập lý do kỷ luật"
-            android:inputType="textMultiLine"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="10dp" />
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="end"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:padding="24dp">
 
-            <Button
-                android:id="@+id/btnCloseDialog"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="Đóng"
-                android:textAllCaps="false" />
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="24dp"
+                android:text="THÔNG TIN KỶ LUẬT"
+                android:textColor="#EF4444"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btnSaveKyLuat"
-                android:layout_width="wrap_content"
+            <TextView android:text="NHÂN VIÊN VI PHẠM" style="@style/LabelStyle" android:textColor="?attr/colorPrimary" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_input_all">
+                <Spinner
+                    android:id="@+id/spNhanVien"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
+
+            <TextView android:text="NGÀY QUYẾT ĐỊNH" style="@style/LabelStyle" android:textColor="?attr/colorPrimary" />
+            <EditText
+                android:id="@+id/edtNgayQuyetDinh"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_input_all"
+                android:hint="yyyy-MM-dd"
+                android:paddingHorizontal="12dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="15sp"
+                android:focusable="false"
+                android:clickable="true" />
+
+            <TextView android:text="HÌNH THỨC KỶ LUẬT" style="@style/LabelStyle" android:textColor="?attr/colorPrimary" />
+            <EditText
+                android:id="@+id/edtHinhThuc"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_input_all"
+                android:hint="Ví dụ: Cảnh cáo / Phạt tiền"
+                android:paddingHorizontal="12dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="15sp" />
+
+            <TextView android:text="SỐ TIỀN PHẠT" style="@style/LabelStyle" android:textColor="#EF4444" />
+            <EditText
+                android:id="@+id/edtSoTienPhat"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_input_all"
+                android:hint="Nhập số tiền phạt"
+                android:inputType="numberDecimal"
+                android:paddingHorizontal="12dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="15sp" />
+
+            <TextView android:text="LÝ DO CHI TIẾT" style="@style/LabelStyle" android:textColor="?android:attr/textColorSecondary" />
+            <EditText
+                android:id="@+id/edtLyDo"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Lưu"
-                android:textAllCaps="false"
-                android:backgroundTint="#1976D2"
-                android:textColor="@android:color/white" />
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_input_all"
+                android:gravity="top"
+                android:hint="Nhập lý do vi phạm..."
+                android:minLines="3"
+                android:padding="12dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnCloseDialog"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hủy bỏ"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+                <Button
+                    android:id="@+id/btnSaveKyLuat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:backgroundTint="#EF4444"
+                    android:text="Xác nhận"
+                    android:textColor="@android:color/white"
+                    app:cornerRadius="12dp" />
+            </LinearLayout>
         </LinearLayout>
-
-    </LinearLayout>
-
-</ScrollView>
+    </ScrollView>
+</androidx.cardview.widget.CardView>
