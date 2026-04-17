@@ -82,7 +82,6 @@ public class AttendanceActivity extends AppCompatActivity {
         edtSearch.addTextChangedListener(new android.text.TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //Lọc theo tên nhân viên (Autocomplete)
                 search(s.toString());
             }
 

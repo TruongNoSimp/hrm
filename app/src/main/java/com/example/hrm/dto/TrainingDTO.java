@@ -79,7 +79,7 @@ public class TrainingDTO {
 
     public String getEmployeeCode() {
         return employeeCode;
-    } //
+    }
 
     public String getStatus() {
         return status;

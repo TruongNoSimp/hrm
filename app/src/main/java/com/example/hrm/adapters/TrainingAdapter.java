@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hrm.R;
-import com.example.hrm.dto.SalaryDTO;
 import com.example.hrm.dto.TrainingDTO;
 import com.example.hrm.listeners.OnTrainingActionListener;
 import com.example.hrm.utils.DateUtils;
@@ -33,7 +32,7 @@ public class TrainingAdapter extends RecyclerView.Adapter<TrainingAdapter.Traini
     @NonNull
     @Override
     public TrainingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_training, parent, false); //
+        View view = LayoutInflater.from(context).inflate(R.layout.item_training, parent, false);
         return new TrainingViewHolder(view);
     }
 
@@ -61,17 +60,24 @@ public class TrainingAdapter extends RecyclerView.Adapter<TrainingAdapter.Traini
         holder.tvTime.setText(startDate + " - " + endDate);
 
         holder.tvEmployeeName.setText("Học viên: " + dto.getEmployeeName());
-        holder.tvEmployeeCode.setText("Mã NV: " + dto.getEmployeeCode());
     }
 
     private void bindStatusBadge(TrainingViewHolder holder, String status) {
         holder.tvStatus.setText(status); //
         int color;
         switch (status) {
-            case "Xuất sắc": color = Color.parseColor("#4CAF50"); break;
-            case "Đạt": color = Color.parseColor("#2196F3"); break;
-            case "Đang học": color = Color.parseColor("#FF9800"); break;
-            default: color = Color.parseColor("#F44336"); break;
+            case "Xuất sắc":
+                color = Color.parseColor("#4CAF50");
+                break;
+            case "Đạt":
+                color = Color.parseColor("#2196F3");
+                break;
+            case "Đang học":
+                color = Color.parseColor("#FF9800");
+                break;
+            default:
+                color = Color.parseColor("#F44336");
+                break;
         }
         holder.tvStatus.getBackground().setTint(color);
     }

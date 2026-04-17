@@ -233,7 +233,6 @@ public class TrainingActivity extends AppCompatActivity implements OnTrainingAct
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_training, null);
         builder.setView(dialogView);
 
-        // Mapping views (Dùng đúng ID mày đã sửa)
         EditText edtTen = dialogView.findViewById(R.id.edtCourseName);
         EditText edtGv = dialogView.findViewById(R.id.edtTeacherName);
         EditText edtBD = dialogView.findViewById(R.id.edtStartDate);
@@ -242,7 +241,6 @@ public class TrainingActivity extends AppCompatActivity implements OnTrainingAct
         Spinner spKQ = dialogView.findViewById(R.id.spResult);
         Button btnSaveEdit = dialogView.findViewById(R.id.btnSave);
 
-        // Đổ dữ liệu cũ vào để người dùng sửa
         edtTen.setText(dto.getCourseName());
         edtGv.setText(dto.getTeacher());
         edtBD.setText(dto.getStartDate());
@@ -253,7 +251,6 @@ public class TrainingActivity extends AppCompatActivity implements OnTrainingAct
         setSpinnerSelection(spNV, dto.getEmployeeCode());
         setSpinnerResultSelection(spKQ, dto.getStatus());
 
-        // Add date picker listeners
         edtBD.setOnClickListener(v -> showDatePicker(edtBD));
         edtKT.setOnClickListener(v -> showDatePicker(edtKT));
 
@@ -310,8 +307,7 @@ public class TrainingActivity extends AppCompatActivity implements OnTrainingAct
     public void onDelete(TrainingDTO dto) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Xác nhận xóa");
-        builder.setMessage("Bạn có chắc chắn muốn hủy phân công học viên [" + dto.getEmployeeName() +
-                "] khỏi khóa [" + dto.getCourseName() + "] không?");
+        builder.setMessage("Bạn có chắc chắn muốn hủy phân công học viên này không?");
 
         builder.setPositiveButton("Xác nhận", (dialog, which) -> {
             boolean isDeleted = trainingDAO.deleteTraining(dto.getCourseId(), dto.getEmployeeCode());
