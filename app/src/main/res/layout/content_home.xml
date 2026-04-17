@@ -40,7 +40,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardDepartments"
                 android:layout_width="0dp"
-                android:layout_height="120dp"
+                android:layout_height="110dp"
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 app:cardBackgroundColor="?attr/colorSurface"
@@ -50,41 +50,41 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center"
                     android:orientation="vertical"
                     android:padding="12dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tổng phòng ban"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="15sp"
+                        android:text="Phòng ban"
+                        android:layout_marginBottom="8dp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvTotalDepartments"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
                         android:text="0"
                         android:textColor="?attr/colorPrimary"
-                        android:textSize="28sp"
+                        android:textSize="24sp"
+                        android:layout_marginBottom="8dp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Xem chi tiết"
-                        android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="12sp" />
+                        android:text="Bấm để xem thêm"
+                        android:textSize="10sp"
+                        android:textStyle="italic" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardEmployees"
                 android:layout_width="0dp"
-                android:layout_height="120dp"
+                android:layout_height="110dp"
                 android:layout_marginStart="6dp"
                 android:layout_weight="1"
                 app:cardBackgroundColor="?attr/colorSurface"
@@ -94,89 +94,124 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center"
                     android:orientation="vertical"
                     android:padding="12dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tổng nhân viên"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="15sp"
+                        android:text="Nhân viên"
+                        android:layout_marginBottom="8dp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvTotalEmployees"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
                         android:text="0"
                         android:textColor="?attr/colorPrimary"
-                        android:textSize="28sp"
+                        android:textSize="24sp"
+                        android:layout_marginBottom="8dp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Xem chi tiết"
-                        android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="12sp" />
+                        android:text="Bấm để xem thêm"
+                        android:textSize="10sp"
+                        android:textStyle="italic" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardHomeDashboard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardPresent"
-                android:layout_width="0dp"
-                android:layout_height="120dp"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
-                app:cardBackgroundColor="?attr/colorSurface"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:weightSum="3">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tvHomeWorking"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Đi làm hôm nay"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvPresentToday"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
                         android:text="0"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="28sp"
+                        android:textColor="#4CAF50"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Theo dõi chấm công"
-                        android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="12sp" />
+                        android:text="Đi làm"
+                        android:textSize="11sp" />
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvHomeNotCheckin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="#F44336"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chưa checkin"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvHomeTraining"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="#2196F3"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Đào tạo"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:layout_width="wrap_content"
@@ -197,24 +232,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="2">
+                android:weightSum="3">
 
                 <LinearLayout
                     android:id="@+id/menuDepartment"
                     android:layout_width="0dp"
-                    android:layout_height="90dp"
-                    android:layout_marginEnd="6dp"
+                    android:layout_height="85dp"
+                    android:layout_margin="4dp"
                     android:layout_weight="1"
                     android:background="?attr/colorSurface"
                     android:elevation="2dp"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="8dp">
+                    android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:contentDescription="Phòng ban"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:src="@drawable/ic_department"
                         app:tint="?android:attr/colorPrimary" />
 
@@ -223,100 +256,59 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="Phòng ban"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/menuEmployee"
                     android:layout_width="0dp"
-                    android:layout_height="90dp"
-                    android:layout_marginStart="6dp"
+                    android:layout_height="85dp"
+                    android:layout_margin="4dp"
                     android:layout_weight="1"
                     android:background="?attr/colorSurface"
                     android:elevation="2dp"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                    android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:contentDescription="Nhân viên"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:src="@drawable/ic_staff"
                         app:tint="?android:attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:text="Nhân viên"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal"
-                android:weightSum="2">
 
                 <LinearLayout
                     android:id="@+id/menuAttendance"
                     android:layout_width="0dp"
-                    android:layout_height="90dp"
-                    android:layout_marginEnd="6dp"
+                    android:layout_height="85dp"
+                    android:layout_margin="4dp"
                     android:layout_weight="1"
                     android:background="?attr/colorSurface"
                     android:elevation="2dp"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                    android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:contentDescription="Chuyên cần"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:src="@drawable/ic_attendance"
                         app:tint="?android:attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:text="Chuyên cần"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/menuSalary"
-                    android:layout_width="0dp"
-                    android:layout_height="90dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_weight="1"
-                    android:background="?attr/colorSurface"
-                    android:elevation="2dp"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-
-                    <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:contentDescription="Tiền lương"
-                        android:src="@drawable/ic_salary"
-                        app:tint="?android:attr/colorPrimary" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tiền lương"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -324,67 +316,156 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:orientation="horizontal"
-                android:weightSum="2">
+                android:weightSum="3">
 
                 <LinearLayout
-                    android:id="@+id/menuReward"
+                    android:id="@+id/menuSalary"
                     android:layout_width="0dp"
-                    android:layout_height="90dp"
-                    android:layout_marginEnd="6dp"
+                    android:layout_height="85dp"
+                    android:layout_margin="4dp"
                     android:layout_weight="1"
                     android:background="?attr/colorSurface"
                     android:elevation="2dp"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                    android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@drawable/ic_reward"
-                        android:contentDescription="Khen thưởng"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_salary"
                         app:tint="?android:attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Tiền lương"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/menuReward"
+                    android:layout_width="0dp"
+                    android:layout_height="85dp"
+                    android:layout_margin="4dp"
+                    android:layout_weight="1"
+                    android:background="?attr/colorSurface"
+                    android:elevation="2dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_reward"
+                        app:tint="?android:attr/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:text="Khen thưởng"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/menuDiscipline"
                     android:layout_width="0dp"
-                    android:layout_height="90dp"
-                    android:layout_marginStart="6dp"
+                    android:layout_height="85dp"
+                    android:layout_margin="4dp"
                     android:layout_weight="1"
                     android:background="?attr/colorSurface"
                     android:elevation="2dp"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                    android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:src="@drawable/ic_discipline"
-                        android:contentDescription="Kỷ luật"
                         app:tint="?android:attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:text="Kỷ luật"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <LinearLayout
+                    android:id="@+id/menuTraining"
+                    android:layout_width="0dp"
+                    android:layout_height="85dp"
+                    android:layout_margin="4dp"
+                    android:layout_weight="1"
+                    android:background="?attr/colorSurface"
+                    android:elevation="2dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_training"
+                        app:tint="?android:attr/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Đào tạo"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/menuSetting"
+                    android:layout_width="0dp"
+                    android:layout_height="85dp"
+                    android:layout_margin="4dp"
+                    android:layout_weight="1"
+                    android:background="?attr/colorSurface"
+                    android:elevation="2dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_setting"
+                        app:tint="?android:attr/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Cài đặt"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

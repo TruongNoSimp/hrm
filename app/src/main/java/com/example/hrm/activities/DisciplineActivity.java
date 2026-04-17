@@ -27,7 +27,9 @@ import com.example.hrm.models.Discipline;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import com.example.hrm.listeners.OnItemActionListener;
 
@@ -377,9 +379,7 @@ public class DisciplineActivity extends AppCompatActivity {
     }
 
     private void showDatePicker(EditText editText) {
-        java.util.Calendar calendar = java.util.Calendar.getInstance();
-
-        // Nếu EditText đã có ngày, cố gắng parse để hiển thị đúng ngày đó trên lịch
+        Calendar calendar = Calendar.getInstance();
         String currentText = editText.getText().toString();
         if (!currentText.isEmpty()) {
             try {
@@ -392,15 +392,14 @@ public class DisciplineActivity extends AppCompatActivity {
             }
         }
 
-        int year = calendar.get(java.util.Calendar.YEAR);
-        int month = calendar.get(java.util.Calendar.MONTH);
-        int day = calendar.get(java.util.Calendar.DAY_OF_MONTH);
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-                    // Format định dạng yyyy-MM-dd để lưu xuống database cho chuẩn
-                    String date = String.format(java.util.Locale.US, "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                    String date = String.format(Locale.US, "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
                     editText.setText(date);
                 },
                 year, month, day

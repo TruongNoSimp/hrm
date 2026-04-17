@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "hrm.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 12;
 
     //PhongBan
     public static final String TABLE_PHONGBAN = "PhongBan";
@@ -75,6 +75,20 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COL_TONG_PHAT = "tong_phat";
     public static final String COL_TONG_LUONG = "tong_luong";
 
+    // Bảng KhoaHoc
+    public static final String TABLE_KHOAHOC = "KhoaHoc";
+    public static final String COL_ID_KH = "id_kh";
+    public static final String COL_TEN_KH = "ten_kh";
+    public static final String COL_NGAY_BD = "ngay_bat_dau";
+    public static final String COL_NGAY_KT = "ngay_ket_thuc";
+    public static final String COL_GIANG_VIEN = "giang_vien";
+
+    // Bảng ChiTietDaoTao
+    public static final String TABLE_CHITIET_DAOTAO = "ChiTietDaoTao";
+    public static final String COL_ID_KH_FK = "id_kh";
+    public static final String COL_ID_NV_FK_DT = "id_nv";
+    public static final String COL_KET_QUA = "ket_qua";
+
     private static final String[][] PHONG_BAN_SEED = {
             {"PB01", "Nhân sự", "Quản lý hồ sơ và tuyển dụng"},
             {"PB02", "Kế toán", "Quản lý tài chính và lương"},
@@ -103,6 +117,21 @@ public class DBHelper extends SQLiteOpenHelper {
             {"truongpm", "123456", "Phùng Minh Trường"},
             {"baodg", "123456", "Đinh Gia Bảo"},
             {"anhnv", "123456", "Nguyễn Văn Anh"}
+    };
+
+    private static final String[][] KHOA_HOC_SEED = {
+            {"Lập trình Java Spring Boot nâng cao", "2026-05-01", "2026-05-15", "GS.TS. Trương Văn Nam"},
+            {"Quản trị nhân sự trong kỷ nguyên AI", "2026-06-10", "2026-06-25", "ThS. Nguyễn Quản Lý"},
+            {"Kỹ năng giao tiếp và xử lý từ chối", "2026-04-01", "2026-04-10", "Chuyên gia Trần Bách"}
+    };
+
+    private static final String[][] DAO_TAO_SEED = {
+            {"1", "2", "Đạt"},
+            {"1", "7", "Đang học"},
+            {"2", "1", "Xuất sắc"},
+            {"2", "9", "Đang học"},
+            {"3", "4", "Không đạt"},
+            {"3", "10", "Đạt"}
     };
 
 
@@ -145,7 +174,6 @@ public class DBHelper extends SQLiteOpenHelper {
                     + "ON DELETE SET NULL)";
             db.execSQL(createNV);
 
-            // Tạo bảng Chuyên Cần
             String createCC = "CREATE TABLE " + TABLE_CHUYENCAN + " ("
                     + COL_ID_CC + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COL_ID_NV_FK + " INTEGER NOT NULL, "
@@ -159,7 +187,6 @@ public class DBHelper extends SQLiteOpenHelper {
                     + "ON DELETE CASCADE)";
             db.execSQL(createCC);
 
-            // Tạo bảng Kỷ Luật
             String createKL = "CREATE TABLE " + TABLE_KYLUAT + " ("
                     + COL_ID_KYLUAT + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COL_ID_NV + " INTEGER NOT NULL, "
@@ -171,7 +198,6 @@ public class DBHelper extends SQLiteOpenHelper {
                     + "ON DELETE CASCADE)";
             db.execSQL(createKL);
 
-            // Tạo bảng Khen Thưởng
             String createKT = "CREATE TABLE " + TABLE_KHENTHUONG + " ("
                     + COL_ID_KHENTHUONG + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COL_ID_NV + " INTEGER NOT NULL, "
@@ -183,7 +209,6 @@ public class DBHelper extends SQLiteOpenHelper {
                     + "ON DELETE CASCADE)";
             db.execSQL(createKT);
 
-            // Tạo bảng Lương
             String createLuong = "CREATE TABLE " + TABLE_LUONG + " ("
                     + COL_ID_LUONG + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COL_ID_NV + " INTEGER NOT NULL, "
@@ -199,13 +224,29 @@ public class DBHelper extends SQLiteOpenHelper {
                     + "ON DELETE CASCADE)";
             db.execSQL(createLuong);
 
-            // Tạo bảng Tài Khoản
             String createTK = "CREATE TABLE " + TABLE_TAIKHOAN + " ("
                     + COL_ID_USER + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COL_USERNAME + " TEXT UNIQUE NOT NULL, "
                     + COL_PASSWORD + " TEXT NOT NULL, "
                     + COL_ADMINNAME + " TEXT)";
             db.execSQL(createTK);
+
+            String createKH = "CREATE TABLE " + TABLE_KHOAHOC + " ("
+                    + COL_ID_KH + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + COL_TEN_KH + " TEXT NOT NULL, "
+                    + COL_NGAY_BD + " TEXT, "
+                    + COL_NGAY_KT + " TEXT, "
+                    + COL_GIANG_VIEN + " TEXT)";
+            db.execSQL(createKH);
+
+            String createCTDT = "CREATE TABLE " + TABLE_CHITIET_DAOTAO + " ("
+                    + COL_ID_KH_FK + " INTEGER, "
+                    + COL_ID_NV_FK_DT + " INTEGER, "
+                    + COL_KET_QUA + " TEXT, "
+                    + "PRIMARY KEY (" + COL_ID_KH_FK + ", " + COL_ID_NV_FK_DT + "), "
+                    + "FOREIGN KEY(" + COL_ID_KH_FK + ") REFERENCES " + TABLE_KHOAHOC + "(" + COL_ID_KH + ") ON DELETE CASCADE, "
+                    + "FOREIGN KEY(" + COL_ID_NV_FK_DT + ") REFERENCES " + TABLE_NHANVIEN + "(" + COL_ID_NV + ") ON DELETE CASCADE)";
+            db.execSQL(createCTDT);
 
             seedInitialData(db);
             db.setTransactionSuccessful();
@@ -215,7 +256,6 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private void seedInitialData(SQLiteDatabase db) {
-        // Seed Phòng Ban
         for (String[] pb : PHONG_BAN_SEED) {
             db.execSQL(
                     "INSERT INTO " + TABLE_PHONGBAN + " (" +
@@ -226,7 +266,6 @@ public class DBHelper extends SQLiteOpenHelper {
             );
         }
 
-        // Seed Tài Khoản
         for (String[] tk : TAIKHOAN_SEED) {
             db.execSQL("INSERT INTO " + TABLE_TAIKHOAN + " ("
                             + COL_USERNAME + ", "
@@ -254,6 +293,21 @@ public class DBHelper extends SQLiteOpenHelper {
                             Integer.parseInt(nv[6]), nv[7], nv[8],
                             Double.parseDouble(nv[9]), Integer.parseInt(nv[10])});
         }
+
+        for (String[] kh : KHOA_HOC_SEED) {
+            db.execSQL("INSERT INTO " + TABLE_KHOAHOC + " ("
+                            + COL_TEN_KH + ", " + COL_NGAY_BD + ", "
+                            + COL_NGAY_KT + ", " + COL_GIANG_VIEN + ") VALUES (?, ?, ?, ?)",
+                    new Object[]{kh[0], kh[1], kh[2], kh[3]});
+        }
+
+        // 5. Seed Chi Tiết Đào Tạo
+        for (String[] dt : DAO_TAO_SEED) {
+            db.execSQL("INSERT INTO " + TABLE_CHITIET_DAOTAO + " ("
+                            + COL_ID_KH_FK + ", " + COL_ID_NV_FK_DT + ", "
+                            + COL_KET_QUA + ") VALUES (?, ?, ?)",
+                    new Object[]{Integer.parseInt(dt[0]), Integer.parseInt(dt[1]), dt[2]});
+        }
     }
 
     @Override
@@ -267,6 +321,8 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_NHANVIEN);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_PHONGBAN);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAIKHOAN);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_KHOAHOC);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHITIET_DAOTAO);
             onCreate(db);
             db.setTransactionSuccessful();
         } finally {

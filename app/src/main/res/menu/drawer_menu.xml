@@ -9,37 +9,41 @@
 
         <item
             android:id="@+id/nav_department"
-            android:icon="@android:drawable/ic_menu_sort_by_size"
+            android:icon="@drawable/ic_department"
             android:title="Quản lý phòng ban" />
 
         <item
             android:id="@+id/nav_employee"
-            android:icon="@android:drawable/ic_menu_myplaces"
+            android:icon="@drawable/ic_attendance"
             android:title="Quản lý nhân viên" />
 
         <item
             android:id="@+id/nav_attendance"
-            android:icon="@android:drawable/ic_menu_today"
-            android:title="Chấm công" />
+            android:icon="@drawable/ic_attendance"
+            android:title="Quản lý chuyên cần" />
 
         <item
             android:id="@+id/nav_salary"
-            android:icon="@android:drawable/ic_menu_edit"
-            android:title="Tiền lương" />
+            android:icon="@drawable/ic_salary"
+            android:title="Quản lý tiền lương" />
 
         <item
             android:id="@+id/nav_reward"
-            android:icon="@android:drawable/star_big_on"
-            android:title="Khen thưởng" />
+            android:icon="@drawable/ic_reward"
+            android:title="Quản lý khen thưởng" />
 
         <item
             android:id="@+id/nav_discipline"
-            android:icon="@android:drawable/ic_delete"
-            android:title="Kỷ luật" />
+            android:icon="@drawable/ic_discipline"
+            android:title="Quản lý kỷ luật" />
+        <item
+            android:id="@+id/nav_training"
+            android:icon="@drawable/ic_training"
+            android:title="Quản lý đào tạo" />
 
         <item
             android:id="@+id/nav_settings"
-            android:icon="@android:drawable/ic_menu_preferences"
+            android:icon="@drawable/ic_setting"
             android:title="Cài đặt ứng dụng" />
     </group>
 

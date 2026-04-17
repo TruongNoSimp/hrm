@@ -215,7 +215,7 @@ public class EmployeeActivity extends AppCompatActivity {
             adapterPB.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinnerPhongBan.setAdapter(adapterPB);
 
-            ArrayAdapter<String> adapterTT = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Đang làm", "Đã nghỉ"});
+            ArrayAdapter<String> adapterTT = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Đang làm việc", "Đã nghỉ việc"});
             adapterTT.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinnerTrangThai.setAdapter(adapterTT);
 

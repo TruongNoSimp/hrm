@@ -79,7 +79,13 @@ public class SettingActivity extends AppCompatActivity {
         swBiometric.setChecked(prefs.getBoolean("isBiometricEnabled", false));
         swDarkMode.setChecked(prefs.getBoolean("isDarkMode", false));
         isInternalChange = false;
+
         tvWorkShiftTime.setText(prefs.getString("work_shift", "08:00"));
+
+        String timePattern = prefs.getString("time_format", DateUtils.DEFAULT_TIME_FORMAT);
+        tvTimeFormat.setText(timePattern.equals("HH:mm") ? "24 giờ (19:00)" : "12 giờ (07:00 PM)");
+
+        tvDateFormat.setText(prefs.getString("date_format", DateUtils.DEFAULT_DATE_FORMAT));
     }
 
     private void setupToolbar() {
@@ -236,14 +242,12 @@ public class SettingActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Chọn định dạng ngày");
         builder.setSingleChoiceItems(options, checkedItem, (dialog, which) -> {
-            // Khi user bấm chọn cái nào, lưu ngay vào SharedPreferences
             String selected = options[which];
             prefs.edit().putString("date_format", selected).apply();
+            if (tvDateFormat != null) tvDateFormat.setText(selected);
 
             Toast.makeText(this, "Đã đổi sang: " + selected, Toast.LENGTH_SHORT).show();
             dialog.dismiss();
-
-            // Mày có thể reload lại UI ở đây nếu cần hiện mẫu ngày tháng mới
         });
         builder.setNegativeButton("Hủy", null);
         builder.show();
@@ -254,7 +258,7 @@ public class SettingActivity extends AppCompatActivity {
         String[] values = {"hh:mm a", "HH:mm"};
         String currentVal = prefs.getString("time_format", DateUtils.DEFAULT_TIME_FORMAT);
 
-        int checkedItem = currentVal.equals("HH:mm") ? 0 : 1;
+        int checkedItem = currentVal.equals("HH:mm") ? 1 : 0;
 
         new AlertDialog.Builder(this)
                 .setTitle("Chọn định dạng giờ")
@@ -337,7 +341,6 @@ public class SettingActivity extends AppCompatActivity {
             com.example.hrm.utils.BackupService.restoreDatabase(this, uri);
             Toast.makeText(this, "Khôi phục thành công! Đang khởi động lại app...", Toast.LENGTH_LONG).show();
 
-            // Restart app sau 2 giây để DB mới có hiệu lực
             new Handler().postDelayed(() -> {
                 Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
                 if (i != null) {

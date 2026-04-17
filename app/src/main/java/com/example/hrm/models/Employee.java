@@ -136,4 +136,9 @@ public class Employee {
     public void setGioVao(String gioVao) {
         this.gioVao = gioVao;
     }
+
+    @Override
+    public String toString() {
+        return hoTen != null ? hoTen : "Chưa xác định";
+    }
 }
