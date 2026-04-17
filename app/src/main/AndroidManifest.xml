@@ -48,6 +48,10 @@
         <activity
             android:name=".activities.SalaryActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.TrainingActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

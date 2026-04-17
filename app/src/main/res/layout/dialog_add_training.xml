@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="0dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="ĐÀO TẠO NHANH"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="24dp"
+                android:text="Tạo khóa học và gán nhân viên ngay"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="13sp" />
+
+            <TextView android:text="Tên khóa học" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp" />
+            <EditText
+                android:id="@+id/edtCourseName"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_input_all"
+                android:hint="Ví dụ: Kỹ năng mềm..."
+                android:paddingHorizontal="16dp"
+                android:layout_marginBottom="16dp" />
+
+            <TextView android:text="Giảng viên" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp" />
+            <EditText
+                android:id="@+id/edtTeacherName"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_input_all"
+                android:hint="Tên giảng viên"
+                android:paddingHorizontal="16dp"
+                android:layout_marginBottom="16dp" />
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="false">
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginEnd="8dp">
+                    <TextView android:text="Ngày bắt đầu" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp" />
+                    <EditText android:id="@+id/edtStartDate" android:layout_width="match_parent" android:layout_height="50dp" android:background="@drawable/bg_input_all" android:focusable="false" android:hint="yyyy-mm-dd" android:paddingHorizontal="16dp" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="8dp">
+                    <TextView android:text="Ngày kết thúc" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp" />
+                    <EditText android:id="@+id/edtEndDate" android:layout_width="match_parent" android:layout_height="50dp" android:background="@drawable/bg_input_all" android:focusable="false" android:hint="yyyy-mm-dd" android:paddingHorizontal="16dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView android:text="Nhân viên" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:layout_marginBottom="8dp" />
+            <FrameLayout android:layout_width="match_parent" android:layout_height="50dp" android:background="@drawable/bg_input_all" android:layout_marginBottom="16dp">
+                <Spinner android:id="@+id/spStaff" android:layout_width="match_parent" android:layout_height="match_parent" />
+            </FrameLayout>
+
+            <TextView android:text="Trạng thái / Kết quả" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp" />
+            <FrameLayout android:layout_width="match_parent" android:layout_height="50dp" android:background="@drawable/bg_input_all" android:layout_marginBottom="24dp">
+                <Spinner
+                    android:id="@+id/spResult"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="LƯU ĐÀO TẠO"
+                android:textStyle="bold"
+                app:cornerRadius="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Hủy bỏ"
+                android:textColor="?android:attr/textColorSecondary" />
+        </LinearLayout>
+    </ScrollView>
+</com.google.android.material.card.MaterialCardView>

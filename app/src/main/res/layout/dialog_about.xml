@@ -25,7 +25,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HRM SYSTEM"
+            android:text="HỆ THỐNG QUẢN LÝ NHÂN SỰ"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -33,7 +33,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Version 1.0.26 - Stable"
+            android:text="HRM"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Version 1.0.36"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="12sp" />
 
@@ -72,30 +79,35 @@
                     app:cardBackgroundColor="?android:attr/windowBackground"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:padding="12dp">
+
                         <ImageView
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:src="@android:drawable/btn_star_big_on" />
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
                             android:orientation="vertical">
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Phạm Anh Đức (Trưởng nhóm)"
                                 android:textColor="?attr/colorPrimary"
                                 android:textStyle="bold" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Chức năng hệ thống"
+                                android:text="Chuyên cần, Đào tạo, Cài đặt hệ thống"
                                 android:textColor="?android:attr/textColorSecondary"
                                 android:textSize="12sp" />
                         </LinearLayout>
@@ -109,31 +121,36 @@
                     app:cardBackgroundColor="?android:attr/windowBackground"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:padding="12dp">
+
                         <ImageView
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:src="@android:drawable/ic_menu_edit"
                             app:tint="?android:attr/textColorSecondary" />
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
                             android:orientation="vertical">
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Phùng Minh Trường"
                                 android:textColor="?android:attr/textColorPrimary"
                                 android:textStyle="bold" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="UI/UX Design &amp; Documents"
+                                android:text="Nhân viên, Tiền lương"
                                 android:textColor="?android:attr/textColorSecondary"
                                 android:textSize="12sp" />
                         </LinearLayout>
@@ -147,31 +164,36 @@
                     app:cardBackgroundColor="?android:attr/windowBackground"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:padding="12dp">
+
                         <ImageView
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:src="@android:drawable/ic_menu_view"
                             app:tint="?android:attr/textColorSecondary" />
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
                             android:orientation="vertical">
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Đinh Gia Bảo"
                                 android:textColor="?android:attr/textColorPrimary"
                                 android:textStyle="bold" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Chức năng"
+                                android:text="Khen thưởng"
                                 android:textColor="?android:attr/textColorSecondary"
                                 android:textSize="12sp" />
                         </LinearLayout>
@@ -185,31 +207,36 @@
                     app:cardBackgroundColor="?android:attr/windowBackground"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:padding="12dp">
+
                         <ImageView
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:src="@android:drawable/ic_menu_view"
                             app:tint="?android:attr/textColorSecondary" />
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
                             android:orientation="vertical">
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Nguyễn Văn Anh"
                                 android:textColor="?android:attr/textColorPrimary"
                                 android:textStyle="bold" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Chức năng"
+                                android:text="Kỷ luật"
                                 android:textColor="?android:attr/textColorSecondary"
                                 android:textSize="12sp" />
                         </LinearLayout>
